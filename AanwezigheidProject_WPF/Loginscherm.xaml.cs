@@ -11,9 +11,9 @@ using System.Windows.Shapes;
 
 namespace AanwezigheidProject_WPF
 {
-    public partial class MainWindow : Window
+    public partial class Loginscherm : Window
     {
-        public MainWindow()
+        public Loginscherm()
         {
             InitializeComponent();
         }
@@ -33,6 +33,8 @@ namespace AanwezigheidProject_WPF
             {
                 MessageBox.Show("Succesvol ingelogd!", "Ingelogd", MessageBoxButton.OK, MessageBoxImage.Information);
                 // Open volgende scherm of sluit huidig scherm
+                CreateTraining createTrainingWindow = new CreateTraining();
+                createTrainingWindow.Show();
                 this.Close();
             }
             else

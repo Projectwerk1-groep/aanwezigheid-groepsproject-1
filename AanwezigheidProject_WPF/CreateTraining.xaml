@@ -1,0 +1,15 @@
+﻿<Window x:Class="AanwezigheidProject_WPF.CreateTraining"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Kalender Voorbeeld" Height="200" Width="300">
+    <Grid>
+        <Label Content="Selecteer een datum:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+
+        <!-- DatePicker voor datumselectie -->
+        <DatePicker x:Name="MyDatePicker" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0" Width="200"/>
+
+        <Button Content="Toon Geselecteerde Datum" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,80,0,0" Width="200"
+                Click="ShowSelectedDate_Click"/>
+    </Grid>
+    
+</Window>
