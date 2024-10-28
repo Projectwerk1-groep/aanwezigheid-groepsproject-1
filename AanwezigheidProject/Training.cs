@@ -15,7 +15,6 @@ namespace AanwezigheidProject
         public int Id { get; set; }
         public DateTime Datum{ get; set; }
         public string Thema { get; set; }
-        public int TotaalAanwezigheid { get; set; }
         public List<Speler> Spelers { get; set; }
     }
 }

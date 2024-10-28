@@ -8,8 +8,8 @@ namespace AanwezigheidProject
 {
     public class Aanwezigheid
     {  
-        public int SpelerID { get; set; }
-        public int TrainingID { get; set; }
+        public Speler Speler { get; set; }
+        public Training Training { get; set; }
         public bool IsAanwezig { get; set; }
         public bool HeeftAfwezigheidGemeld { get; set; }
         public string RedenAfwezigheid { get; set; }
