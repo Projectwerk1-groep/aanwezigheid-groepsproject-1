@@ -10,13 +10,20 @@ namespace AanwezigheidBL.Model
 {
     public class Training
     {
-        public Training()
+        //We zullen hier een constructor toevoegen met alle eigenschappen van deze klasse, omdat we het nodig hebben om het aanmaken van objecten in de data-laag te vergemakkelijken.
+        public Training(int trainingID, DateTime datum, string thema, Team team)
         {
-            Spelers = new List<Speler>();
+            TrainingID = trainingID;
+            Datum = datum;
+            Thema = thema;
+            Team = team;
+
         }
-        public int Id { get; set; }
-        public DateTime Datum{ get; set; }
+        public Training() { }
+
+        public int TrainingID { get; set; }
+        public DateTime Datum { get; set; }
         public string Thema { get; set; }
-        public List<Speler> Spelers { get; set; }
+        public Team Team { get; set; }
     }
 }

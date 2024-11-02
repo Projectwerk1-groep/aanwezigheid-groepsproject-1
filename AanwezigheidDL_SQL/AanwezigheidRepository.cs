@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AanwezigheidBL.Interfaces;
 using AanwezigheidBL.Model;
+using AanwezigheidBL.Exceptions;
 
 
 namespace AanwezigheidDL_SQL
@@ -115,5 +117,80 @@ namespace AanwezigheidDL_SQL
                 }
             }
         }
+        //=======================================================================================================
+        public List<Speler> LeesSpelers()
+        {
+            string SQL = "SELECT * FROM Speler";
+            List<Speler> spelers = new List<Speler>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = SQL;
+                    IDataReader reader = cmd.ExecuteReader();
+
+                    List<Team> teams = LeesTeams();
+                    Dictionary<int, Team> dicTeams = new Dictionary<int, Team>();
+
+                    foreach (Team team in teams)
+                    {
+                        dicTeams.Add(team.TeamID, team);
+                    }
+
+                    while (reader.Read())
+                    {
+                        spelers.Add(new Speler((int)reader["spelerID"], (string)reader["naam"], (int)reader["rugNummer"], (string)reader["positie"], dicTeams[(int)reader["teamID"]]));
+                    }
+                    return spelers;
+                }
+                catch (Exception ex)
+                {
+                    throw new SpelerException("LeesSpelers", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public List<Aanwezigheid> LeesAanwezigheden()
+        {
+            string SQL = "SELECT * FROM Aanwezigheid";
+            List<Aanwezigheid> aanwezigheden = new List<Aanwezigheid>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = SQL;
+                    IDataReader reader = cmd.ExecuteReader();
+
+                    List<Speler> spelers = LeesSpelers();
+                    Dictionary<int, Speler> dicSpelers = new Dictionary<int, Speler>();
+                    foreach (Speler speler in spelers)
+                    {
+                        dicSpelers.Add(speler.SpelerID, speler);
+                    }
+
+                    List<Training> trainingen = LeesTrainingen();
+                    Dictionary<int, Training> dicTrainingen = new Dictionary<int, Training>();
+                    foreach (Training training in trainingen)
+                    {
+                        dicTrainingen.Add(training.TrainingID, training);
+                    }
+
+                    while (reader.Read())
+                    {
+                        aanwezigheden.Add(new Aanwezigheid(dicSpelers[(int)reader["spelerID"]], dicTrainingen[(int)reader["trainingID"]], (bool)reader["isAanwezig"], (bool)reader["heeftAfwezigheidGemeld"], (string)reader["redenAfwezigheid"]));
+                    }
+                    return aanwezigheden;
+                }
+                catch (Exception ex)
+                {
+                    throw new SpelerException("LeesAanwezigheden", ex);
+                }
+            }
+        }
+        //=======================================================================================================
     }
 }
