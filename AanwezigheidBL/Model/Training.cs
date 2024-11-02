@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AanwezigheidBL.Exceptions;
 
-namespace AanwezigheidProject
+
+namespace AanwezigheidBL.Model
 {
     public class Training
     {

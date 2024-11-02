@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AanwezigheidBL.Exceptions;
 
-namespace AanwezigheidProject
+
+namespace AanwezigheidBL.Model
 {
     public class Aanwezigheid
-    {  
+    {
         public Speler Speler { get; set; }
         public Training Training { get; set; }
         public bool IsAanwezig { get; set; }

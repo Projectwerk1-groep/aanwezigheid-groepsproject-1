@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AanwezigheidProject
+namespace AanwezigheidBL.Exceptions
 {
     public class SpelerException : Exception
     {
