@@ -17,7 +17,7 @@ namespace AanwezigheidBL.Managers
         {
             _aanwezigheidRepository = aanwezigheidRepository;
         }
-
+        //=======================================================================================================
         public double BereekAanwezigheidsPercentage(Speler speler)
         {
             List<Aanwezigheid> alleTrainingen = _aanwezigheidRepository.LeesAanwezigheden();
@@ -65,5 +65,51 @@ namespace AanwezigheidBL.Managers
 
             }
         }
+        //=======================================================================================================
+        public void VoegTeamToe(Team team)
+        {
+            try
+            {
+                if (!_aanwezigheidRepository.HeeftTeam(team))
+                {
+                    _aanwezigheidRepository.SchrijfTeam(team);
+                }
+            }
+            catch (SpelerException ex)
+            {
+
+            }
+        }
+        //=======================================================================================================
+        public void VoegTrainingToe(Training training)
+        {
+            try
+            {
+                if (!_aanwezigheidRepository.HeeftTraining(training))
+                {
+                    _aanwezigheidRepository.SchrijfTraining(training);
+                }
+            }
+            catch (SpelerException ex)
+            {
+
+            }
+        }
+        //=======================================================================================================
+        public void VoegLetselToe(Letsel letsel)
+        {
+            try
+            {
+                if (!_aanwezigheidRepository.HeeftLetsel(letsel))
+                {
+                    _aanwezigheidRepository.SchrijfLetsel(letsel);
+                }
+            }
+            catch (SpelerException ex)
+            {
+
+            }
+        }
+        //=======================================================================================================
     }
 }

@@ -22,6 +22,12 @@ namespace AanwezigheidBL.Interfaces
         public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid);
         public bool HeeftCoach(Coach coach);
         public void SchrijfCoach(Coach coach);
+        public bool HeeftTeam(Team team);
+        public void SchrijfTeam(Team team);
+        public bool HeeftTraining(Training training);
+        public void SchrijfTraining(Training training);
+        public bool HeeftLetsel(Letsel letsel);
+        public void SchrijfLetsel(Letsel letsel);
 
     }
 }

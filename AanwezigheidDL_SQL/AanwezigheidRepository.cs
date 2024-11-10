@@ -356,5 +356,161 @@ namespace AanwezigheidDL_SQL
                 }
             }
         }
+        //=======================================================================================================
+        public bool HeeftTeam(Team team)
+        {
+            string sql = "SELECT COUNT(*) FROM Team WHERE teamNaam=@teamNaam AND coachID=@coachID";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@teamNaam", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@coachID", SqlDbType.Int));
+                    cmd.Parameters["@teamNaam"].Value = team.TeamNaam;
+                    cmd.Parameters["@coachID"].Value = team.Coach.CoachID;
+                    int n = (int)cmd.ExecuteScalar();
+                    if (n > 0) return true; else return false;
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("HeeftTeam", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public void SchrijfTeam(Team team)
+        {
+            string sql = "INSERT INTO Team(teamNaam, coachID) VALUES (@teamNaam, @coachID)";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@teamNaam", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@coachID", SqlDbType.Int));
+                    cmd.Parameters["@teamNaam"].Value = team.TeamNaam;
+                    cmd.Parameters["@coachID"].Value = team.Coach.CoachID;
+                    cmd.ExecuteNonQuery();
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("SchrijfTeam", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public bool HeeftTraining(Training training)
+        {
+            string sql = "SELECT COUNT(*) FROM Training WHERE datum=@datum AND thema=@thema AND teamID=@teamID";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@datum", SqlDbType.DateTime));
+                    cmd.Parameters.Add(new SqlParameter("@thema", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@teamID", SqlDbType.Int));
+                    cmd.Parameters["@datum"].Value = training.Datum;
+                    cmd.Parameters["@thema"].Value = training.Thema;
+                    cmd.Parameters["@teamID"].Value = training.Team.TeamID;
+                    int n = (int)cmd.ExecuteScalar();
+                    if (n > 0) return true; else return false;
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("HeeftTraining", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public void SchrijfTraining(Training training)
+        {
+            string sql = "INSERT INTO Training(datum, thema, teamID) VALUES (@datum, @thema, @teamID)";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@datum", SqlDbType.DateTime));
+                    cmd.Parameters.Add(new SqlParameter("@thema", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@teamID", SqlDbType.Int));
+                    cmd.Parameters["@datum"].Value = training.Datum;
+                    cmd.Parameters["@thema"].Value = training.Thema;
+                    cmd.Parameters["@teamID"].Value = training.Team.TeamID;
+                    cmd.ExecuteNonQuery();
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("SchrijfTeam", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public bool HeeftLetsel(Letsel letsel)
+        {
+            string sql = "SELECT COUNT(*) FROM Letsel WHERE spelerID=@spelerID AND letselType=@letselType AND letselDatum=@letselDatum AND notities=@notities";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@spelerID", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@letselType", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@letselDatum", SqlDbType.DateTime));
+                    cmd.Parameters.Add(new SqlParameter("@notities", SqlDbType.VarChar));
+                    cmd.Parameters["@spelerID"].Value = letsel.Speler.SpelerID;
+                    cmd.Parameters["@letselType"].Value = letsel.LetselType;
+                    cmd.Parameters["@letselDatum"].Value = letsel.LetselDatum;
+                    cmd.Parameters["@notities"].Value = letsel.Notities;
+                    int n = (int)cmd.ExecuteScalar();
+                    if (n > 0) return true; else return false;
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("HeeftLetsel", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public void SchrijfLetsel(Letsel letsel)
+        {
+            string sql = "INSERT INTO Letsel(spelerID, letselType, letselDatum, notities) VALUES (@spelerID, @letselType, @letselDatum, @notities)";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@spelerID", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@letselType", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@letselDatum", SqlDbType.DateTime));
+                    cmd.Parameters.Add(new SqlParameter("@notities", SqlDbType.VarChar));
+
+                    cmd.Parameters["@spelerID"].Value = letsel.Speler.SpelerID;
+                    cmd.Parameters["@letselType"].Value = letsel.LetselType;
+                    cmd.Parameters["@letselDatum"].Value = letsel.LetselDatum;
+                    cmd.Parameters["@notities"].Value = letsel.Notities;
+
+                    cmd.ExecuteNonQuery();
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("SchrijfLetsel", ex);
+                }
+            }
+        }
+        //=======================================================================================================
     }
 }
