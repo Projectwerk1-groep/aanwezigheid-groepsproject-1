@@ -10,14 +10,16 @@ namespace AanwezigheidBL.Model
     {
         //We zullen hier een constructor toevoegen met alle eigenschappen van deze klasse,
         //omdat we het nodig hebben om het aanmaken van objecten in de data-laag te vergemakkelijken.
-        public Letsel(Speler speler, string letselType, DateTime letselDatum, string notities)
+        public Letsel(int letselID ,Speler speler, string letselType, DateTime letselDatum, string notities)
         {
+            LetselID = letselID;
             Speler = speler;
             LetselType = letselType;
             LetselDatum = letselDatum;
             Notities = notities;
         }
-        public Letsel() { }
+        public Letsel() { }        
+        public int LetselID { get; set; }
         public Speler Speler { get; set; }
         public string LetselType { get; set; }
         public DateTime LetselDatum { get; set; }

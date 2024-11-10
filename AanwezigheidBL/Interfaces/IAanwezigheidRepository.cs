@@ -26,6 +26,7 @@ namespace AanwezigheidBL.Interfaces
         public void SchrijfTeam(Team team);
         public bool HeeftTraining(Training training);
         public void SchrijfTraining(Training training);
+        public List<Letsel> LeesLetsels();
         public bool HeeftLetsel(Letsel letsel);
         public void SchrijfLetsel(Letsel letsel);
 

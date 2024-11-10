@@ -146,7 +146,7 @@ namespace AanwezigheidDL_SQL
                     }
                     return spelers;
                 }
-                catch (Exception ex)
+                catch (SpelerException ex)
                 {
                     throw new SpelerException("LeesSpelers", ex);
                 }
@@ -186,9 +186,43 @@ namespace AanwezigheidDL_SQL
                     }
                     return aanwezigheden;
                 }
-                catch (Exception ex)
+                catch (SpelerException ex)
                 {
                     throw new SpelerException("LeesAanwezigheden", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public List<Letsel> LeesLetsels()
+        {
+            string SQL = "SELECT * FROM Letsel";
+            List<Letsel> letsels = new List<Letsel>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = SQL;
+                    IDataReader reader = cmd.ExecuteReader();
+
+                    List<Speler> spelers = LeesSpelers();
+                    Dictionary<int, Speler> dicSpelers = new Dictionary<int, Speler>();
+
+                    foreach (Speler speler in spelers)
+                    {
+                        dicSpelers.Add(speler.SpelerID, speler);
+                    }
+
+                    while (reader.Read())
+                    {
+                        letsels.Add(new Letsel((int)reader["letselID"], dicSpelers[(int)reader["spelerID"]], (string)reader["letselType"],(DateTime)reader["letselDatum"], (string)reader["notities"]));
+                    }
+                    return letsels;
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("LeesLetsels", ex);
                 }
             }
         }
