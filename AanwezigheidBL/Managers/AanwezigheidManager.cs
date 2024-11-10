@@ -1,4 +1,5 @@
-﻿using AanwezigheidBL.Interfaces;
+﻿using AanwezigheidBL.Exceptions;
+using AanwezigheidBL.Interfaces;
 using AanwezigheidBL.Model;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,44 @@ namespace AanwezigheidBL.Managers
 
             return aantalDeelnames / alleTrainingenVanEenSpeler.Count * 100;
         }
+        //=======================================================================================================
+        public void VoegSpelerToe(Speler speler)
+        {
+            try
+            {
+                if (!_aanwezigheidRepository.HeeftSpeler(speler))
+                    _aanwezigheidRepository.SchrijfSpeler(speler);
+            }
+            catch (SpelerException ex)
+            {
 
+            }
+        }
+        //=======================================================================================================
+        public void VoegAanwezigheidToe(Aanwezigheid aanwezigheid)
+        {
+            try
+            {
+                if (!_aanwezigheidRepository.HeeftAanwezigheid(aanwezigheid))
+                    _aanwezigheidRepository.SchrijfAanwezigheid(aanwezigheid);
+            }
+            catch (SpelerException ex)
+            {
 
+            }
+        }
+        //=======================================================================================================
+        public void VoegCoachToe(Coach coach)
+        {
+            try
+            {
+                if (!_aanwezigheidRepository.HeeftCoach(coach))
+                    _aanwezigheidRepository.SchrijfCoach(coach);
+            }
+            catch (SpelerException ex)
+            {
+
+            }
+        }
     }
 }

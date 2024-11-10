@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AanwezigheidBL.Interfaces;
 using AanwezigheidBL.Model;
 using AanwezigheidBL.Exceptions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace AanwezigheidDL_SQL
@@ -192,5 +193,168 @@ namespace AanwezigheidDL_SQL
             }
         }
         //=======================================================================================================
+        public bool HeeftSpeler(Speler speler)
+        {
+            string sql = "SELECT COUNT(*) FROM Speler WHERE naam = @naam  AND rugNummer = @rugNummer AND positie = @positie AND teamID = @teamID;";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@naam", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@rugNummer", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@positie", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@teamID", SqlDbType.Int));
+
+                    cmd.Parameters["@naam"].Value = speler.Naam;
+                    cmd.Parameters["@rugNummer"].Value = speler.RugNummer;
+                    cmd.Parameters["@positie"].Value = speler.Positie;
+                    cmd.Parameters["@teamID"].Value = speler.Team.TeamID;
+                
+                    int n = (int)cmd.ExecuteScalar();
+                    if (n > 0) return true; else return false;
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("HeeftSpeler", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public void SchrijfSpeler(Speler speler)
+        {
+            string sql = "INSERT INTO Speler(naam ,rugNummer,positie,teamID) VALUES (@naam,@rugNummer,@positie,@teamID)";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@naam", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@rugNummer", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@positie", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@teamID", SqlDbType.Int));
+
+                    cmd.Parameters["@naam"].Value = speler.Naam;
+                    cmd.Parameters["@rugNummer"].Value = speler.RugNummer;
+                    cmd.Parameters["@positie"].Value = speler.Positie;
+                    cmd.Parameters["@teamID"].Value = speler.Team.TeamID;
+                    cmd.ExecuteNonQuery();
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("SchrijfSpeler", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public bool HeeftAanwezigheid(Aanwezigheid aanwezigheid)
+        {
+            string sql = "SELECT COUNT(*) FROM Aanwezigheid WHERE spelerID = @spelerID  AND trainingID = @trainingID AND isAanwezig = @isAanwezig AND heeftAfwezigheidGemeld = @heeftAfwezigheidGemeld AND redenAfwezigheid= @redenAfwezigheid;";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@spelerID", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@trainingID", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@isAanwezig", SqlDbType.Bit));
+                    cmd.Parameters.Add(new SqlParameter("@heeftAfwezigheidGemeld", SqlDbType.Bit));
+                    cmd.Parameters.Add(new SqlParameter("@redenAfwezigheid", SqlDbType.VarChar));
+
+                    cmd.Parameters["@spelerID"].Value = aanwezigheid.Speler.SpelerID;
+                    cmd.Parameters["@trainingID"].Value = aanwezigheid.Training.TrainingID;
+                    cmd.Parameters["@isAanwezig"].Value = aanwezigheid.IsAanwezig;
+                    cmd.Parameters["@heeftAfwezigheidGemeld"].Value = aanwezigheid.HeeftAfwezigheidGemeld;
+                    cmd.Parameters["@redenAfwezigheid"].Value = aanwezigheid.RedenAfwezigheid;
+
+                    int n = (int)cmd.ExecuteScalar();
+                    if (n > 0) return true; else return false;
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("HeeftAanwezigheid", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid)
+        {
+            string sql = "INSERT INTO Aanwezigheid(spelerID ,trainingID,isAanwezig,heeftAfwezigheidGemeld,redenAfwezigheid) VALUES (@spelerID ,@trainingID,@isAanwezig,@heeftAfwezigheidGemeld,@redenAfwezigheid)";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@spelerID", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@trainingID", SqlDbType.Int));
+                    cmd.Parameters.Add(new SqlParameter("@isAanwezig", SqlDbType.Bit));
+                    cmd.Parameters.Add(new SqlParameter("@heeftAfwezigheidGemeld", SqlDbType.Bit));
+                    cmd.Parameters.Add(new SqlParameter("@redenAfwezigheid", SqlDbType.VarChar));
+
+                    cmd.Parameters["@spelerID"].Value = aanwezigheid.Speler.SpelerID;
+                    cmd.Parameters["@trainingID"].Value = aanwezigheid.Training.TrainingID;
+                    cmd.Parameters["@isAanwezig"].Value = aanwezigheid.IsAanwezig;
+                    cmd.Parameters["@heeftAfwezigheidGemeld"].Value = aanwezigheid.HeeftAfwezigheidGemeld;
+                    cmd.Parameters["@redenAfwezigheid"].Value = aanwezigheid.RedenAfwezigheid;
+                    cmd.ExecuteNonQuery();
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("SchrijfAanwezigheid", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public bool HeeftCoach(Coach coach)
+        {
+            string sql = "SELECT COUNT(*) FROM Coach WHERE naam = @naam;";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@naam", SqlDbType.VarChar));
+                    cmd.Parameters["@naam"].Value = coach.Naam;
+
+                    int n = (int)cmd.ExecuteScalar();
+                    if (n > 0) return true; else return false;
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("HeeftCoach", ex);
+                }
+            }
+        }
+        //=======================================================================================================
+        public void SchrijfCoach(Coach coach)
+        {
+            string sql = "INSERT INTO Coach(naam) VALUES (@naam)";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@naam", SqlDbType.VarChar));
+                    cmd.Parameters["@naam"].Value = coach.Naam;
+                    cmd.ExecuteNonQuery();
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("SchrijfCoach", ex);
+                }
+            }
+        }
     }
 }

@@ -16,5 +16,12 @@ namespace AanwezigheidBL.Interfaces
         public List<Training> LeesTrainingen();
         public List<Speler> LeesSpelers();
         public List<Aanwezigheid> LeesAanwezigheden();
+        public bool HeeftSpeler(Speler speler);
+        public void SchrijfSpeler(Speler speler);
+        public bool HeeftAanwezigheid(Aanwezigheid aanwezigheid);
+        public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid);
+        public bool HeeftCoach(Coach coach);
+        public void SchrijfCoach(Coach coach);
+
     }
 }
