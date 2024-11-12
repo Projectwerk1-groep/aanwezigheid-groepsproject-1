@@ -1,15 +1,229 @@
 ﻿<Window x:Class="AanwezigheidProject_WPF.CreateTraining"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Kalender Voorbeeld" Height="200" Width="300">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+        mc:Ignorable="d"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        Title="Trainingscherm" Height="750" Width="1000">
+
+    <!-- Window Resources -->
+    <Window.Resources>
+        <!-- Styles -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="Background" Value="{DynamicResource PrimaryHueMidBrush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                         BorderBrush="{TemplateBinding BorderBrush}"
+                         BorderThickness="{TemplateBinding BorderThickness}"
+                         CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="materialDesign:Card">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="MinWidth" Value="200" />
+            <Setter Property="MaxWidth" Value="400" />
+            <Setter Property="MaxLength" Value="2" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="materialDesign:HintAssist.Hint" Value="Score" />
+            <Setter Property="Style" Value="{StaticResource MaterialDesignFloatingHintTextBox}" />
+        </Style>
+        <Style TargetType="DatePicker">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </Window.Resources>
+
     <Grid>
-        <Label Content="Selecteer een datum:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        <!-- Background -->
+        <!--<Rectangle>
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="DeepSkyBlue" />
+                    <GradientStop Color="DarkBlue" Offset="1" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>-->
 
-        <!-- DatePicker voor datumselectie -->
-        <DatePicker x:Name="MyDatePicker" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,40,0,0" Width="200"/>
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
 
-        <Button Content="Toon Geselecteerde Datum" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,80,0,0" Width="200"
-                Click="ShowSelectedDate_Click"/>
+            <!-- Header -->
+            <materialDesign:Card Grid.Row="0">
+                <DockPanel>          
+                    
+                    <TextBlock x:Name="CoachNameTextBlock" Margin="10,0,0,0" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Naam Trainer: " />
+                    <ComboBox x:Name="TeamComboBox" Width="200" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,0" Text="Team"/>
+                    <Button Content="Logout" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>
+
+                </DockPanel>
+            </materialDesign:Card>
+            
+            <!-- Tab Control -->
+            <TabControl
+                Grid.Row="1"
+                TabStripPlacement="Top"
+                Style="{StaticResource MaterialDesignTabControl}"
+                SnapsToDevicePixels="True">
+
+                <!-- Overzicht vakken -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel>
+                            <TextBlock HorizontalAlignment="Center" Text="Overzicht" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <materialDesign:Card>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+
+                                <Grid Margin="10,10,10,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <TextBlock Grid.Column="0" x:Name="TrainingTextBlock" Margin="10,10" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Training: " />
+                                    <TextBlock Grid.Column="1" x:Name="AantalSpelersTextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal spelers: " />
+                                    <TextBlock Grid.Column="2" x:Name="AantalAanwezigTextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal aanwezigen: " />
+
+                                    <!-- DatePicker voor datumselectie -->
+                                    <DatePicker Grid.Column="3" x:Name="MyDatePicker" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,10" Width="200">
+                                        <DatePicker.CalendarStyle>
+                                            <Style TargetType="Calendar" BasedOn="{StaticResource MaterialDesignCalendarPortrait}">
+                                                <Style.Resources>
+                                                    <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="Red" />
+                                                    <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="Green" />
+                                                </Style.Resources>
+                                            </Style>
+                                        </DatePicker.CalendarStyle>
+                                    </DatePicker>
+                                    
+                                    <TextBox Grid.Column="4" Text="{Binding Remark, Mode=TwoWay}" Margin="10,10" materialDesign:HintAssist.Hint="Thema" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="200" AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap" MaxLength="255"/>
+
+                                </Grid>
+                              
+                                <TextBlock Text="Overzicht Spelers" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10" />
+                                <ListBox x:Name="SpelerListBox" SelectionChanged="SpelerListBox_SelectionChanged" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Courses}" />
+                            
+                            </StackPanel>
+                        </ScrollViewer>
+                    </materialDesign:Card>
+                </TabItem>
+
+                <!-- details vakken -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel>
+                            <TextBlock HorizontalAlignment="Center" Text="Details" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <materialDesign:Card>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <DockPanel>
+                                    <TextBlock Text="Geselecteerd vak: " FontSize="18" FontWeight="SemiBold" Margin="0,0,10,10" />
+                                    <TextBlock x:Name="SelectedCourseTextBlock" FontSize="18" Margin="0,0,10,10" />
+
+                                    <!-- Opslaan Button -->
+                                    <Button Content="Opslaan"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,0,10,0"
+                                        Command="{Binding SaveChangesCommand}"
+                                        Style="{StaticResource MaterialDesignFlatButton}" />
+                                    
+                                </DockPanel>
+
+                                <!-- Controls for Onderwijsvormen -->
+                                <Expander IsExpanded="True">
+                                    <Expander.Header>
+                                        <TextBlock Text="Onderwijsvormen" FontSize="18" FontWeight="Light" Foreground="MediumBlue"/>
+                                    </Expander.Header>
+                                    <StackPanel Margin="0,0,0,5">
+                                        <ItemsControl ItemsSource="{Binding EducationFormats}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="0,0,0,5">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="2*" />
+                                                            <ColumnDefinition Width="1.67*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <CheckBox Content="{Binding Name}" Style="{StaticResource MaterialDesignCheckBox}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                                        <TextBox Grid.Column="1" Text="{Binding Remark, Mode=TwoWay}" materialDesign:HintAssist.Hint="Opmerking" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap" MaxLength="255"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Expander>
+
+                                <!-- Controls for soft skills -->
+                                <Expander IsExpanded="True">
+                                    <Expander.Header>
+                                        <TextBlock Text="Soft Skills" FontSize="18" FontWeight="Light" Foreground="MediumBlue"/>
+                                    </Expander.Header>
+                                    <StackPanel Margin="0,0,0,15">
+                                        <ItemsControl ItemsSource="{Binding SoftSkills}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="0,0,0,5">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="3*" />
+                                                            <ColumnDefinition Width="0.75*" />
+                                                            <ColumnDefinition Width="1.75*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <CheckBox Grid.Column="0" Content="{Binding Title}" Style="{StaticResource MaterialDesignCheckBox}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                                        <TextBox Grid.Column="1" Text="{Binding Score, Mode=TwoWay}" materialDesign:HintAssist.Hint="Score" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" MaxLength="2"/>
+                                                        <TextBox Grid.Column="2" Text="{Binding Remark, Mode=TwoWay}" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Opmerkingen" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" TextAlignment="Center" AcceptsReturn="True" MaxLength="255" Margin="5,0,0,0"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Expander>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </materialDesign:Card>
+                </TabItem>
+
+            </TabControl>
+        
+        </Grid>
+    
     </Grid>
     
 </Window>
