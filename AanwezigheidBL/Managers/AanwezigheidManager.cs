@@ -17,7 +17,8 @@ namespace AanwezigheidBL.Managers
         {
             _aanwezigheidRepository = aanwezigheidRepository;
         }
-        //=======================================================================================================
+
+        #region Aanwezighed
         public double BereekAanwezigheidsPercentage(Speler speler)
         {
             List<Aanwezigheid> alleTrainingen = _aanwezigheidRepository.LeesAanwezigheden();
@@ -26,20 +27,6 @@ namespace AanwezigheidBL.Managers
 
             return aantalDeelnames / alleTrainingenVanEenSpeler.Count * 100;
         }
-        //=======================================================================================================
-        public void VoegSpelerToe(Speler speler)
-        {
-            try
-            {
-                if (!_aanwezigheidRepository.HeeftSpeler(speler))
-                    _aanwezigheidRepository.SchrijfSpeler(speler);
-            }
-            catch (SpelerException ex)
-            {
-
-            }
-        }
-        //=======================================================================================================
         public void VoegAanwezigheidToe(Aanwezigheid aanwezigheid)
         {
             try
@@ -52,7 +39,20 @@ namespace AanwezigheidBL.Managers
 
             }
         }
-        //=======================================================================================================
+        #endregion
+
+        public void VoegSpelerToe(Speler speler)
+        {
+            try
+            {
+                if (!_aanwezigheidRepository.HeeftSpeler(speler))
+                    _aanwezigheidRepository.SchrijfSpeler(speler);
+            }
+            catch (SpelerException ex)
+            {
+
+            }
+        }
         public void VoegCoachToe(Coach coach)
         {
             try
@@ -65,7 +65,6 @@ namespace AanwezigheidBL.Managers
 
             }
         }
-        //=======================================================================================================
         public void VoegTeamToe(Team team)
         {
             try
@@ -80,7 +79,6 @@ namespace AanwezigheidBL.Managers
 
             }
         }
-        //=======================================================================================================
         public void VoegTrainingToe(Training training)
         {
             try
@@ -95,7 +93,6 @@ namespace AanwezigheidBL.Managers
 
             }
         }
-        //=======================================================================================================
         public void VoegLetselToe(Letsel letsel)
         {
             try
@@ -110,6 +107,18 @@ namespace AanwezigheidBL.Managers
 
             }
         }
-        //=======================================================================================================
+
+        public void WijzigTraining(Training oldTraining, Training newTraining)
+        {
+            try
+            {
+                _aanwezigheidRepository.SchrijfWijzigingTraining(oldTraining, newTraining);
+            }
+            catch (SpelerException ex)
+            {
+
+            }
+        }
+
     }
 }
