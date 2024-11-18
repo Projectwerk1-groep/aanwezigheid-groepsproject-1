@@ -30,6 +30,8 @@ namespace AanwezigheidBL.Interfaces
         public bool HeeftLetsel(Letsel letsel);
         public void SchrijfLetsel(Letsel letsel);
         public void SchrijfWijzigingTraining(Training oldTraining, Training newTraining);
+        public void SchrijfWijzigingSpeler(Speler oldSpeler, Speler newSpeler);
+        public void VerwijderSpelerVanDB(Speler speler);
 
     }
 }

@@ -107,7 +107,6 @@ namespace AanwezigheidBL.Managers
 
             }
         }
-
         public void WijzigTraining(Training oldTraining, Training newTraining)
         {
             try
@@ -119,6 +118,27 @@ namespace AanwezigheidBL.Managers
 
             }
         }
+        public void WijzigSpeler(Speler oldSpeler, Speler newSpeler)
+        {
+            try
+            {
+                _aanwezigheidRepository.SchrijfWijzigingSpeler(oldSpeler, newSpeler);
+            }
+            catch (SpelerException ex)
+            {
 
+            }
+        }
+        public void VerwijderSpeler(Speler speler)
+        {
+            try
+            {
+                _aanwezigheidRepository.VerwijderSpelerVanDB(speler);
+            }
+            catch (SpelerException ex)
+            {
+
+            }
+        }
     }
 }

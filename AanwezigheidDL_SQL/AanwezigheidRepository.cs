@@ -1,8 +1,8 @@
-﻿using System.Data.SqlClient;
-using System.Data;
+﻿using System.Data;
 using AanwezigheidBL.Interfaces;
 using AanwezigheidBL.Model;
 using AanwezigheidBL.Exceptions;
+using Microsoft.Data.SqlClient;
 
 
 namespace AanwezigheidDL_SQL
@@ -112,7 +112,7 @@ namespace AanwezigheidDL_SQL
 
                     while (reader.Read())
                     {
-                        teams.Add(new Team((int)reader["teamID"], (string)reader["teamNaam"], dicCoach[(int)reader["coachID"]]));
+                        teams.Add(new Team((int)reader["id"], (string)reader["naam"], dicCoach[(int)reader["coach_id"]]));
                     }
                     return teams;
                 }
@@ -124,7 +124,7 @@ namespace AanwezigheidDL_SQL
         }
         public bool HeeftTeam(Team team)
         {
-            string sql = "SELECT COUNT(*) FROM Team WHERE teamNaam=@teamNaam AND coachID=@coachID";
+            string sql = "SELECT COUNT(*) FROM Team WHERE naam=@naam AND coach_id=@coach_id";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -132,10 +132,8 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@teamNaam", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@coachID", SqlDbType.Int));
-                    cmd.Parameters["@teamNaam"].Value = team.TeamNaam;
-                    cmd.Parameters["@coachID"].Value = team.Coach.CoachID;
+                    cmd.Parameters.AddWithValue("@naam", team.TeamNaam);
+                    cmd.Parameters.AddWithValue("@coach_id", team.Coach.CoachID);
                     int n = (int)cmd.ExecuteScalar();
                     if (n > 0) return true; else return false;
                 }
@@ -147,7 +145,7 @@ namespace AanwezigheidDL_SQL
         }
         public void SchrijfTeam(Team team)
         {
-            string sql = "INSERT INTO Team(teamNaam, coachID) VALUES (@teamNaam, @coachID)";
+            string sql = "INSERT INTO Team(naam, coach_id) VALUES (@naam, @coach_id)";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -155,10 +153,8 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@teamNaam", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@coachID", SqlDbType.Int));
-                    cmd.Parameters["@teamNaam"].Value = team.TeamNaam;
-                    cmd.Parameters["@coachID"].Value = team.Coach.CoachID;
+                    cmd.Parameters.AddWithValue("@naam", team.TeamNaam);
+                    cmd.Parameters.AddWithValue("@coach_id", team.Coach.CoachID);
                     cmd.ExecuteNonQuery();
                 }
                 catch (SpelerException ex)
@@ -205,7 +201,7 @@ namespace AanwezigheidDL_SQL
         }
         public bool HeeftTraining(Training training)
         {
-            string sql = "SELECT COUNT(*) FROM Training WHERE datum=@datum AND thema=@thema AND team_id=@teamID";
+            string sql = "SELECT COUNT(*) FROM Training WHERE datum=@datum AND thema=@thema AND team_id=@team_id";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -213,12 +209,9 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@datum", SqlDbType.DateTime));
-                    cmd.Parameters.Add(new SqlParameter("@thema", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@teamID", SqlDbType.Int));
-                    cmd.Parameters["@datum"].Value = training.Datum;
-                    cmd.Parameters["@thema"].Value = training.Thema;
-                    cmd.Parameters["@teamID"].Value = training.Team.TeamID;
+                    cmd.Parameters.AddWithValue("@datum", training.Datum);
+                    cmd.Parameters.AddWithValue("@thema", training.Thema);
+                    cmd.Parameters.AddWithValue("@team_id", training.Team.TeamID);
                     int n = (int)cmd.ExecuteScalar();
                     if (n > 0) return true; else return false;
                 }
@@ -230,7 +223,7 @@ namespace AanwezigheidDL_SQL
         }
         public void SchrijfTraining(Training training)
         {
-            string sql = "INSERT INTO Training(datum, thema, team_id) VALUES (@datum, @thema, @teamID)";
+            string sql = "INSERT INTO Training(datum, thema, team_id) VALUES (@datum, @thema, @team_id)";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -238,17 +231,14 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@datum", SqlDbType.DateTime));
-                    cmd.Parameters.Add(new SqlParameter("@thema", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@teamID", SqlDbType.Int));
-                    cmd.Parameters["@datum"].Value = training.Datum;
-                    cmd.Parameters["@thema"].Value = training.Thema;
-                    cmd.Parameters["@teamID"].Value = training.Team.TeamID;
+                    cmd.Parameters.AddWithValue("@datum", training.Datum);
+                    cmd.Parameters.AddWithValue("@thema", training.Thema);
+                    cmd.Parameters.AddWithValue("@team_id", training.Team.TeamID);
                     cmd.ExecuteNonQuery();
                 }
                 catch (SpelerException ex)
                 {
-                    throw new SpelerException("SchrijfTeam", ex);
+                    throw new SpelerException("SchrijfTraining", ex);
                 }
             }
         }
@@ -366,6 +356,51 @@ namespace AanwezigheidDL_SQL
                 catch (SpelerException ex)
                 {
                     throw new SpelerException("SchrijfSpeler", ex);
+                }
+            }
+        }
+        public void SchrijfWijzigingSpeler(Speler oldSpeler, Speler newSpeler)
+        {
+            string sql = "UPDATE Speler SET id = @newId, naam = @newNaam, rugNummer = @newRugNummer, team_id = @newTeamID WHERE id = @oldId";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@newId", newSpeler.SpelerID);
+                    cmd.Parameters.AddWithValue("@newNaam", newSpeler.Naam);
+                    cmd.Parameters.AddWithValue("@newRugNummer", newSpeler.RugNummer);
+                    cmd.Parameters.AddWithValue("@newPositie", newSpeler.Positie);
+                    cmd.Parameters.AddWithValue("@newTeamID", newSpeler.Team.TeamID);
+
+                    cmd.Parameters.AddWithValue("@oldId", oldSpeler.SpelerID);
+
+                    cmd.ExecuteNonQuery();
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("SchrijfWijzigingSpeler", ex);
+                }
+            }
+        }
+        public void VerwijderSpelerVanDB(Speler speler)
+        {
+            string sql = "DELETE FROM Speler WHERE id = @id;";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@id", speler.SpelerID);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (SpelerException ex)
+                {
+                    throw new SpelerException("VerwijderSpeler", ex);
                 }
             }
         }
@@ -497,7 +532,7 @@ namespace AanwezigheidDL_SQL
 
                     while (reader.Read())
                     {
-                        letsels.Add(new Letsel((int)reader["letselID"], dicSpelers[(int)reader["spelerID"]], (string)reader["letselType"],(DateTime)reader["letselDatum"], (string)reader["notities"]));
+                        letsels.Add(new Letsel((int)reader["id"], dicSpelers[(int)reader["speler_id"]], (string)reader["letselType"],(DateTime)reader["letselDatum"], (string)reader["notities"]));
                     }
                     return letsels;
                 }
@@ -509,7 +544,7 @@ namespace AanwezigheidDL_SQL
         }
         public bool HeeftLetsel(Letsel letsel)
         {
-            string sql = "SELECT COUNT(*) FROM Letsel WHERE spelerID=@spelerID AND letselType=@letselType AND letselDatum=@letselDatum AND notities=@notities";
+            string sql = "SELECT COUNT(*) FROM Letsel WHERE speler_id=@speler_id AND letselType=@letselType AND letselDatum=@letselDatum AND notities=@notities";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -517,14 +552,10 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@spelerID", SqlDbType.Int));
-                    cmd.Parameters.Add(new SqlParameter("@letselType", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@letselDatum", SqlDbType.DateTime));
-                    cmd.Parameters.Add(new SqlParameter("@notities", SqlDbType.VarChar));
-                    cmd.Parameters["@spelerID"].Value = letsel.Speler.SpelerID;
-                    cmd.Parameters["@letselType"].Value = letsel.LetselType;
-                    cmd.Parameters["@letselDatum"].Value = letsel.LetselDatum;
-                    cmd.Parameters["@notities"].Value = letsel.Notities;
+                    cmd.Parameters.AddWithValue("@speler_id", letsel.Speler.SpelerID);
+                    cmd.Parameters.AddWithValue("@letselType", letsel.LetselType);
+                    cmd.Parameters.AddWithValue("@letselDatum", letsel.LetselDatum);
+                    cmd.Parameters.AddWithValue("@notities", letsel.Notities);
                     int n = (int)cmd.ExecuteScalar();
                     if (n > 0) return true; else return false;
                 }
@@ -536,7 +567,7 @@ namespace AanwezigheidDL_SQL
         }
         public void SchrijfLetsel(Letsel letsel)
         {
-            string sql = "INSERT INTO Letsel(spelerID, letselType, letselDatum, notities) VALUES (@spelerID, @letselType, @letselDatum, @notities)";
+            string sql = "INSERT INTO Letsel(speler_id, letselType, letselDatum, notities) VALUES (@speler_id, @letselType, @letselDatum, @notities)";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -544,16 +575,10 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@spelerID", SqlDbType.Int));
-                    cmd.Parameters.Add(new SqlParameter("@letselType", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@letselDatum", SqlDbType.DateTime));
-                    cmd.Parameters.Add(new SqlParameter("@notities", SqlDbType.VarChar));
-
-                    cmd.Parameters["@spelerID"].Value = letsel.Speler.SpelerID;
-                    cmd.Parameters["@letselType"].Value = letsel.LetselType;
-                    cmd.Parameters["@letselDatum"].Value = letsel.LetselDatum;
-                    cmd.Parameters["@notities"].Value = letsel.Notities;
-
+                    cmd.Parameters.AddWithValue("@speler_id", letsel.Speler.SpelerID);
+                    cmd.Parameters.AddWithValue("@letselType", letsel.LetselType);
+                    cmd.Parameters.AddWithValue("@letselDatum", letsel.LetselDatum);
+                    cmd.Parameters.AddWithValue("@notities", letsel.Notities);
                     cmd.ExecuteNonQuery();
                 }
                 catch (SpelerException ex)
