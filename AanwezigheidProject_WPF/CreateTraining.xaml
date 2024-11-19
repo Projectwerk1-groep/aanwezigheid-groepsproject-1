@@ -80,15 +80,15 @@
 
             <!-- Header -->
             <materialDesign:Card Grid.Row="0">
-                <DockPanel>          
-                    
+                <DockPanel>
+
                     <TextBlock x:Name="CoachNameTextBlock" Margin="10,0,0,0" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Naam Trainer: " />
                     <ComboBox x:Name="TeamComboBox" Width="200" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,0" Text="Team"/>
                     <Button Content="Logout" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>
 
                 </DockPanel>
             </materialDesign:Card>
-            
+
             <!-- Tab Control -->
             <TabControl
                 Grid.Row="1"
@@ -103,10 +103,11 @@
                             <TextBlock HorizontalAlignment="Center" Text="Overzicht" />
                         </StackPanel>
                     </TabItem.Header>
-                    <materialDesign:Card>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel>
 
+                    <materialDesign:Card>
+                        <StackPanel>
+
+                            <StackPanel >
                                 <Grid Margin="10,10,10,20">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto" />
@@ -114,14 +115,15 @@
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
-                                    
+
                                     <TextBlock Grid.Column="0" x:Name="TrainingTextBlock" Margin="10,10" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Training: " />
                                     <TextBlock Grid.Column="1" x:Name="AantalSpelersTextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal spelers: " />
                                     <TextBlock Grid.Column="2" x:Name="AantalAanwezigTextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal aanwezigen: " />
 
                                     <!-- DatePicker voor datumselectie -->
-                                    <DatePicker Grid.Column="3" x:Name="MyDatePicker" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,10" Width="200">
+                                    <DatePicker Grid.Column="3" x:Name="MyDatePicker" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,10" Width="200">
                                         <DatePicker.CalendarStyle>
                                             <Style TargetType="Calendar" BasedOn="{StaticResource MaterialDesignCalendarPortrait}">
                                                 <Style.Resources>
@@ -131,16 +133,28 @@
                                             </Style>
                                         </DatePicker.CalendarStyle>
                                     </DatePicker>
-                                    
-                                    <TextBox Grid.Column="4" Text="{Binding Remark, Mode=TwoWay}" Margin="10,10" materialDesign:HintAssist.Hint="Thema" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="200" AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap" MaxLength="255"/>
+
+                                    <TextBox Grid.Column="4" Text="{Binding Remark, Mode=TwoWay}" VerticalAlignment="Center" Margin="10,20" materialDesign:HintAssist.Hint="Thema" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="200" AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap" MaxLength="255"/>
+                                    <Button Grid.Column="5" Content="Opslaan" VerticalAlignment="Center" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>
 
                                 </Grid>
-                              
-                                <TextBlock Text="Overzicht Spelers" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10" />
-                                <ListBox x:Name="SpelerListBox" SelectionChanged="SpelerListBox_SelectionChanged" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Courses}" />
-                            
                             </StackPanel>
-                        </ScrollViewer>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+
+                                    <TextBlock Text="Overzicht Spelers" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10" />
+                                    <ListBox x:Name="SpelerListBox" SelectionChanged="SpelerListBox_SelectionChanged" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Speles}" />
+
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Button Content="Speler Toevoegen" FontSize="18" Background="DarkGreen" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                <Button Content="Speler Verwijderen" FontSize="18" Background="DarkRed" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                            </StackPanel>
+
+                        </StackPanel>
                     </materialDesign:Card>
                 </TabItem>
 
@@ -164,7 +178,7 @@
                                         Margin="0,0,10,0"
                                         Command="{Binding SaveChangesCommand}"
                                         Style="{StaticResource MaterialDesignFlatButton}" />
-                                    
+
                                 </DockPanel>
 
                                 <!-- Controls for Onderwijsvormen -->
@@ -221,9 +235,9 @@
                 </TabItem>
 
             </TabControl>
-        
+
         </Grid>
-    
+
     </Grid>
-    
+
 </Window>
