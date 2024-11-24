@@ -15,9 +15,14 @@ namespace AanwezigheidBL.Model
             CoachID = coachID;
             Naam = naam;
         }
-        public Coach() { }
-        public int CoachID { get; set; }
+        public Coach(string naam)
+        {
+            Naam = naam;
+        }
+        public int? CoachID;
+
         private string _naam;
+
         public string Naam
         {
             get { return _naam; }

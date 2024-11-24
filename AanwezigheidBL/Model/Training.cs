@@ -19,11 +19,17 @@ namespace AanwezigheidBL.Model
             Team = team;
 
         }
-        public Training() { }
+        public Training(DateTime datum, string thema, Team team)
+        {
+            Datum = datum;
+            Thema = thema;
+            Team = team;
+        }
 
-        public int TrainingID { get; set; }
+        public int? TrainingID;
         public DateTime Datum { get; set; }
         public string Thema { get; set; }
         public Team Team { get; set; }
+        public List<Speler> Spelers { get; set; }
     }
 }
