@@ -96,7 +96,7 @@
                 Style="{StaticResource MaterialDesignTabControl}"
                 SnapsToDevicePixels="True">
 
-                <!-- Overzicht vakken -->
+                <!-- Overzicht spelers -->
                 <TabItem>
                     <TabItem.Header>
                         <StackPanel>
@@ -143,94 +143,105 @@
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel>
 
-                                    <TextBlock Text="Overzicht Spelers" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10" />
-                                    <ListBox x:Name="SpelerListBox" SelectionChanged="SpelerListBox_SelectionChanged" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Speles}" />
+                                    <TextBlock Text="Overzicht Spelers:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" />
+                                    <!--Implementeer SelectionChanged="OverzichtSpelers_ListBox_SelectionChanged"-->
+                                    <ListBox x:Name="OverzichtSpelers_ListBox" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Spelers}" />
 
                                 </StackPanel>
                             </ScrollViewer>
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Button Content="Speler Toevoegen" FontSize="18" Background="DarkGreen" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
-                                <Button Content="Speler Verwijderen" FontSize="18" Background="DarkRed" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                <Button Content="Speler Toevoegen" FontSize="16" Background="SeaGreen" Height="Auto" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                <Button Content="Speler Verwijderen" FontSize="16" Background="IndianRed" Height="Auto" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
                             </StackPanel>
 
                         </StackPanel>
                     </materialDesign:Card>
                 </TabItem>
 
-                <!-- details vakken -->
+                <!-- details spelers -->
                 <TabItem>
                     <TabItem.Header>
                         <StackPanel>
                             <TextBlock HorizontalAlignment="Center" Text="Details" />
                         </StackPanel>
                     </TabItem.Header>
+                    
                     <materialDesign:Card>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel>
-                                <DockPanel>
-                                    <TextBlock Text="Geselecteerd vak: " FontSize="18" FontWeight="SemiBold" Margin="0,0,10,10" />
-                                    <TextBlock x:Name="SelectedCourseTextBlock" FontSize="18" Margin="0,0,10,10" />
+                        <StackPanel>
+                            <StackPanel >
+                                <Grid Margin="10,10,10,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                    <!-- Opslaan Button -->
-                                    <Button Content="Opslaan"
-                                        HorizontalAlignment="Right"
-                                        Margin="0,0,10,0"
-                                        Command="{Binding SaveChangesCommand}"
-                                        Style="{StaticResource MaterialDesignFlatButton}" />
-
-                                </DockPanel>
-
-                                <!-- Controls for Onderwijsvormen -->
-                                <Expander IsExpanded="True">
-                                    <Expander.Header>
-                                        <TextBlock Text="Onderwijsvormen" FontSize="18" FontWeight="Light" Foreground="MediumBlue"/>
-                                    </Expander.Header>
-                                    <StackPanel Margin="0,0,0,5">
-                                        <ItemsControl ItemsSource="{Binding EducationFormats}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid Margin="0,0,0,5">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="2*" />
-                                                            <ColumnDefinition Width="1.67*" />
-                                                        </Grid.ColumnDefinitions>
-                                                        <CheckBox Content="{Binding Name}" Style="{StaticResource MaterialDesignCheckBox}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
-                                                        <TextBox Grid.Column="1" Text="{Binding Remark, Mode=TwoWay}" materialDesign:HintAssist.Hint="Opmerking" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap" MaxLength="255"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </StackPanel>
-                                </Expander>
-
-                                <!-- Controls for soft skills -->
-                                <Expander IsExpanded="True">
-                                    <Expander.Header>
-                                        <TextBlock Text="Soft Skills" FontSize="18" FontWeight="Light" Foreground="MediumBlue"/>
-                                    </Expander.Header>
-                                    <StackPanel Margin="0,0,0,15">
-                                        <ItemsControl ItemsSource="{Binding SoftSkills}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid Margin="0,0,0,5">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="3*" />
-                                                            <ColumnDefinition Width="0.75*" />
-                                                            <ColumnDefinition Width="1.75*" />
-                                                        </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" Content="{Binding Title}" Style="{StaticResource MaterialDesignCheckBox}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
-                                                        <TextBox Grid.Column="1" Text="{Binding Score, Mode=TwoWay}" materialDesign:HintAssist.Hint="Score" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" MaxLength="2"/>
-                                                        <TextBox Grid.Column="2" Text="{Binding Remark, Mode=TwoWay}" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Opmerkingen" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" TextAlignment="Center" AcceptsReturn="True" MaxLength="255" Margin="5,0,0,0"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </StackPanel>
-                                </Expander>
-
+                                    <TextBlock Grid.Column="0" x:Name="Team_TextBlock" Margin="10,10" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Team: " />
+                                    <TextBlock Grid.Column="1" x:Name="Team_Naam_TextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="*TeamNaam*" />
+                                    <TextBlock Grid.Column="2" x:Name="Team_AantalSpelers_TextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal spelers: " />
+                                </Grid>
                             </StackPanel>
-                        </ScrollViewer>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+
+                                    <TextBlock Text="Details Spelers:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" />
+                                    <!--Implementeer SelectionChanged="Details_ListBox_SelectionChanged"-->
+                                    <ListBox x:Name="Details_ListBox" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Spelers}" />
+
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Button Content="Speler Toevoegen" FontSize="16" Background="SeaGreen" Height="Auto" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
+                                <Button Content="Speler Verwijderen" FontSize="16" Background="IndianRed" Height="Auto" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </materialDesign:Card>
+                </TabItem>
+
+                <!-- historiek trainingen -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel>
+                            <TextBlock HorizontalAlignment="Center" Text="Historiek" />
+                        </StackPanel>
+                    </TabItem.Header>
+
+                    <materialDesign:Card>
+                        <StackPanel>
+                            <StackPanel >
+                                <Grid Margin="10,10,10,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" x:Name="Historiek_Team_TextBlock" Margin="10,10" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Team: " />
+                                    <TextBlock Grid.Column="1" x:Name="Historiek_Team_Naam_TextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="*TeamNaam*" />
+                                    <TextBlock Grid.Column="2" x:Name="Historiek_Team_AantalTrainingen_TextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal Trainingen: " />
+                                </Grid>
+                            </StackPanel>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+
+                                    <TextBlock Text="Historiek Trainingen:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" />
+                                    <!--implementeer SelectionChanged="Historiek_ListBox_SelectionChanged"-->
+                                    <ListBox x:Name="Historiek_ListBox" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Trainingen}" />
+
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Button Content="Traininggegevens Tonen" FontSize="16" Background="SeaGreen" Height="Auto" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
+                                <Button Content="Export naar Tekstbestand" FontSize="16" Background="RoyalBlue" Height="Auto" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                            </StackPanel>
+
+                        </StackPanel>
                     </materialDesign:Card>
                 </TabItem>
 

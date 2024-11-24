@@ -11,9 +11,9 @@ using System.Windows.Shapes;
 
 namespace AanwezigheidProject_WPF
 {
-    public partial class Loginscherm : Window
+    public partial class LoginWindow : Window
     {
-        public Loginscherm()
+        public LoginWindow()
         {
             InitializeComponent();
         }
