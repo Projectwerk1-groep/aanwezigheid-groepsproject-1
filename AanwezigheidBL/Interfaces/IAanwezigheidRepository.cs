@@ -11,7 +11,6 @@ namespace AanwezigheidBL.Interfaces
 {
     public interface IAanwezigheidRepository
     {
-
         public List<Speler> LeesSpelersVanTeam(int teamID); //Aanpassen
         public bool HeeftTeam(Team team);
         public bool HeeftLetsel(Letsel letsel);
@@ -22,12 +21,15 @@ namespace AanwezigheidBL.Interfaces
         public void VerwijderSpelerVanDB(Speler speler);
         public double LeesPercentageAanwezigheid(int spelerID); //Aanpassen
         public List<Team> LeesTeams();
-
+        public Training LeesTrainingOmAanwezighedenTeMaken(Training trainingZonderID); //Aanpassen
         public bool HeeftSpeler(Speler speler);
         public void SchrijfSpeler(Speler speler);
         public bool HeeftAanwezigheid(Aanwezigheid aanwezigheid);
         public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid);
         public void SchrijfWijzigingTraining(Training oldTraining, Training newTraining);
+        public List<Training> LeesTrainingenVanTeam(int teamId);
+        public void LeesEnSchrijfAanwezigheidPerTrainingInTXT(Training training, Team team, string filePath);
+
         #region Nog niet gebruiken
 
         public void SchrijfTeam(Team team);

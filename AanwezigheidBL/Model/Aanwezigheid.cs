@@ -24,7 +24,7 @@ namespace AanwezigheidBL.Model
         public Speler Speler { get; set; }
         public Training Training { get; set; }
         public bool IsAanwezig { get; set; }
-        public bool HeeftAfwezigheidGemeld { get; set; }
-        public string RedenAfwezigheid { get; set; }
+        public bool? HeeftAfwezigheidGemeld { get; set; }
+        public string? RedenAfwezigheid { get; set; }
     }
 }

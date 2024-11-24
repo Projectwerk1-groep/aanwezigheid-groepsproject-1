@@ -18,20 +18,58 @@ namespace AanwezigheidBL.Managers
             _aanwezigheidRepository = aanwezigheidRepository;
         }
 
-        public void VoegLetselToe(Letsel letsel)
+        #region Speler
+        public void VoegSpelerToe(Speler speler)
         {
             try
             {
-                if (!_aanwezigheidRepository.HeeftLetsel(letsel))
-                {
-                    _aanwezigheidRepository.SchrijfLetsel(letsel);
-                }
+                if (!_aanwezigheidRepository.HeeftSpeler(speler))
+                    _aanwezigheidRepository.SchrijfSpeler(speler);
             }
             catch (Exception ex)
             {
-                throw new SpelerException(nameof(VoegLetselToe), ex);
+                throw new ManagerException(nameof(VoegSpelerToe), ex);
             }
         }
+        public void WijzigSpeler(Speler oldSpeler, Speler newSpeler)
+        {
+            try
+            {
+                _aanwezigheidRepository.SchrijfWijzigingSpeler(oldSpeler, newSpeler);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(WijzigSpeler), ex);
+            }
+        }
+        public void VerwijderSpeler(Speler speler)
+        {
+            try
+            {
+                _aanwezigheidRepository.VerwijderSpelerVanDB(speler);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(VerwijderSpeler), ex);
+
+            }
+        }
+        public List<Speler> GeefSpelersVanTeem(int teamID)
+        {
+            try
+            {
+                return _aanwezigheidRepository.LeesSpelersVanTeam(teamID);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(GeefSpelersVanTeem), ex);
+            }
+        }
+
+        #endregion
+
+        #region Training
+
         public void VoegTrainingToe(Training training)
         {
             try
@@ -43,29 +81,56 @@ namespace AanwezigheidBL.Managers
             }
             catch (Exception ex)
             {
-                throw new SpelerException(nameof(VoegTrainingToe), ex);
+                throw new ManagerException(nameof(VoegTrainingToe), ex);
             }
         }
-        public void WijzigSpeler(Speler oldSpeler, Speler newSpeler)
+        public void WijzigTraining(Training oldTraining, Training newTraining)
         {
             try
             {
-                _aanwezigheidRepository.SchrijfWijzigingSpeler(oldSpeler, newSpeler);
+                _aanwezigheidRepository.SchrijfWijzigingTraining(oldTraining, newTraining);
             }
-            catch (SpelerException ex)
+            catch (Exception ex)
             {
-
+                throw new ManagerException(nameof(WijzigTraining), ex);
             }
         }
-        public void VerwijderSpeler(Speler speler)
+        public List<Training> GeefTrainingenVanTeam(int teamID)
         {
             try
             {
-                _aanwezigheidRepository.VerwijderSpelerVanDB(speler);
+                return _aanwezigheidRepository.LeesTrainingenVanTeam(teamID);
             }
-            catch (SpelerException ex)
+            catch (Exception ex)
             {
+                throw new ManagerException(nameof(GeefTrainingenVanTeam), ex);
+            }
+        }
 
+        #endregion
+
+        #region Aanwezigheid
+        public void VoegAanwezigheidToe(Aanwezigheid aanwezigheid)
+        {
+            try
+            {
+                if (!_aanwezigheidRepository.HeeftAanwezigheid(aanwezigheid))
+                    _aanwezigheidRepository.SchrijfAanwezigheid(aanwezigheid);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(VoegAanwezigheidToe), ex);
+            }
+        }
+        public void ExportAanwezigheidNaarTXT(Training training, Team team, string filePath)
+        {
+            try
+            {
+                _aanwezigheidRepository.LeesEnSchrijfAanwezigheidPerTrainingInTXT(training, team, filePath);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(ExportAanwezigheidNaarTXT), ex);
             }
         }
         public double GeefPercentageAanwezigheid(int spelerID)
@@ -76,67 +141,69 @@ namespace AanwezigheidBL.Managers
             }
             catch (Exception ex)
             {
-                throw new SpelerException(nameof(GeefPercentageAanwezigheid), ex);
+                throw new ManagerException(nameof(GeefPercentageAanwezigheid), ex);
             }
 
         }
+
+        #endregion
+
+       
         public void VoegTrainingMetZijnAanwezigheidToe(Training training, List<(Speler speler, bool isAanwezig, bool heeftAfwezigheidGemeld, RedenVanAfwezigheid redenAfwezigheid, string letselType, DateTime letselDatum, string notities)> listOmAanwezighedenTeMaken)
         {
-            VoegTrainingToe(training);
-            Training trainingMetID = _aanwezigheidRepository.LeesTrainingOmAanwezighedenTeMaken(training);
-            foreach (var lijn in listOmAanwezighedenTeMaken)
+            try
             {
-                string reden = "";
-                switch (lijn.redenAfwezigheid)
+                VoegTrainingToe(training);
+                Training trainingMetID = _aanwezigheidRepository.LeesTrainingOmAanwezighedenTeMaken(training);
+                foreach (var lijn in listOmAanwezighedenTeMaken)
                 {
-                    case RedenVanAfwezigheid.Letsel: reden = "Letsel"; break;
-                    case RedenVanAfwezigheid.Ziekte: reden = "Ziekte"; break;
-                    case RedenVanAfwezigheid.Andere: reden = "Andere"; break;
+                    string reden = "";
+                    switch (lijn.redenAfwezigheid)
+                    {
+                        case RedenVanAfwezigheid.Letsel: reden = "Letsel"; break;
+                        case RedenVanAfwezigheid.Ziekte: reden = "Ziekte"; break;
+                        case RedenVanAfwezigheid.Andere: reden = "Andere"; break;
+                    }
+                    Aanwezigheid aanwezigheid = new Aanwezigheid(lijn.speler, trainingMetID, lijn.isAanwezig, lijn.heeftAfwezigheidGemeld, reden);
+                    VoegAanwezigheidToe(aanwezigheid);
+
+
+                    if (lijn.redenAfwezigheid == RedenVanAfwezigheid.Letsel)
+                    {
+                        Letsel letsel = new Letsel(lijn.speler, lijn.letselType, lijn.letselDatum, lijn.notities);
+                        VoegLetselToe(letsel);
+                    }
                 }
-                Aanwezigheid aanwezigheid = new Aanwezigheid(lijn.speler, trainingMetID, lijn.isAanwezig, lijn.heeftAfwezigheidGemeld, reden);
-                VoegAanwezigheidToe(aanwezigheid);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(VoegTrainingMetZijnAanwezigheidToe), ex);
+            }
 
-
-                if (lijn.redenAfwezigheid == RedenVanAfwezigheid.Letsel)
+        }
+        public List<Team> GeefTeams()
+        {
+            try
+            {
+                return _aanwezigheidRepository.LeesTeams();
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(GeefTeams), ex);
+            }
+        }
+        public void VoegLetselToe(Letsel letsel)
+        {
+            try
+            {
+                if (!_aanwezigheidRepository.HeeftLetsel(letsel))
                 {
-                    Letsel letsel = new Letsel(lijn.speler, lijn.letselType, lijn.letselDatum, lijn.notities);
-                    VoegLetselToe(letsel);
+                    _aanwezigheidRepository.SchrijfLetsel(letsel);
                 }
             }
-        }
-        public void VoegSpelerToe(Speler speler)
-        {
-            try
+            catch (Exception ex)
             {
-                if (!_aanwezigheidRepository.HeeftSpeler(speler))
-                    _aanwezigheidRepository.SchrijfSpeler(speler);
-            }
-            catch (SpelerException ex)
-            {
-
-            }
-        }
-        public void VoegAanwezigheidToe(Aanwezigheid aanwezigheid)
-        {
-            try
-            {
-                if (!_aanwezigheidRepository.HeeftAanwezigheid(aanwezigheid))
-                    _aanwezigheidRepository.SchrijfAanwezigheid(aanwezigheid);
-            }
-            catch (SpelerException ex)
-            {
-
-            }
-        }
-        public void WijzigTraining(Training oldTraining, Training newTraining)
-        {
-            try
-            {
-                _aanwezigheidRepository.SchrijfWijzigingTraining(oldTraining, newTraining);
-            }
-            catch (SpelerException ex)
-            {
-
+                throw new ManagerException(nameof(VoegLetselToe), ex);
             }
         }
 
@@ -148,9 +215,9 @@ namespace AanwezigheidBL.Managers
                 if (!_aanwezigheidRepository.HeeftCoach(coach))
                     _aanwezigheidRepository.SchrijfCoach(coach);
             }
-            catch (SpelerException ex)
+            catch (Exception ex)
             {
-
+                throw new ManagerException(nameof(VoegCoachToe), ex);
             }
         }
         public void VoegTeamToe(Team team)
@@ -162,9 +229,9 @@ namespace AanwezigheidBL.Managers
                     _aanwezigheidRepository.SchrijfTeam(team);
                 }
             }
-            catch (SpelerException ex)
+            catch (Exception ex)
             {
-
+                throw new ManagerException(nameof(VoegTeamToe), ex);
             }
         }
         #endregion

@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace AanwezigheidBL.Exceptions
 {
-    public class SpelerException : Exception
+    public class ManagerException : Exception
     {
-        public SpelerException(string? message) : base(message)
+        public ManagerException(string? message) : base(message)
         {
         }
 
-        public SpelerException(string? message, Exception? innerException) : base(message, innerException)
+        public ManagerException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
     }

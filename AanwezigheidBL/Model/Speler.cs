@@ -19,8 +19,14 @@ namespace AanwezigheidBL.Model
             Positie = positie;
             Team = team;
         }
-        public Speler() { }
-        public int SpelerID { get; set; }
+        public Speler(string naam, int rugNummer, string positie, Team team)
+        {
+            Naam = naam;
+            RugNummer = rugNummer;
+            Positie = positie;
+            Team = team;
+        }
+        public int? SpelerID;
         private string _naam;
         public string Naam
         {
@@ -29,7 +35,7 @@ namespace AanwezigheidBL.Model
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new SpelerException("De naam van de speler mag niet leeg zijn.");
+                    throw new DomeinException("De naam van de speler mag niet leeg zijn.");
                 }
                 _naam = value;
             }
@@ -40,7 +46,7 @@ namespace AanwezigheidBL.Model
             get { return _rugNummer; }
             set
             {
-                if (value < 1 || value > 99) { throw new SpelerException("De rugnummer kan enkel tussen 1 en 99 zijn."); }
+                if (value < 1 || value > 99) { throw new DomeinException("De rugnummer kan enkel tussen 1 en 99 zijn."); }
                 _rugNummer = value;
             }
         }

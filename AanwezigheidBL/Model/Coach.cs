@@ -30,7 +30,7 @@ namespace AanwezigheidBL.Model
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new SpelerException("De naam van de speler mag niet leeg zijn.");
+                    throw new DomeinException("De naam van de speler mag niet leeg zijn.");
                 }
                 _naam = value;
             }

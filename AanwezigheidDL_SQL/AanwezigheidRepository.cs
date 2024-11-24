@@ -16,6 +16,9 @@ namespace AanwezigheidDL_SQL
             _connectionString = connectionString;
         }
 
+
+        #region Speler
+
         public List<Speler> LeesSpelersVanTeam(int teamID)
         {
             string SQL = "SELECT * FROM Speler WHERE team_id = @team_id;";
@@ -46,13 +49,13 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException(nameof(LeesSpelersVanTeem), ex);
+                    throw new DomeinException(nameof(LeesSpelersVanTeam), ex);
                 }
             }
         }
-        public bool HeeftTeam(Team team)
+        public bool HeeftSpeler(Speler speler)
         {
-            string sql = "SELECT COUNT(*) FROM Team WHERE naam=@naam AND coach_id=@coach_id";
+            string sql = "SELECT COUNT(*) FROM Speler WHERE naam = @naam  AND rugNummer = @rugNummer AND positie = @positie AND team_id = @team_id;";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -60,20 +63,23 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@naam", team.TeamNaam);
-                    cmd.Parameters.AddWithValue("@coach_id", team.Coach.CoachID);
+                    cmd.Parameters.AddWithValue("@naam", speler.Naam);
+                    cmd.Parameters.AddWithValue("@rugNummer", speler.RugNummer);
+                    cmd.Parameters.AddWithValue("@positie", speler.Positie);
+                    cmd.Parameters.AddWithValue("@team_id", speler.Team.TeamID);
+
                     int n = (int)cmd.ExecuteScalar();
                     if (n > 0) return true; else return false;
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException(nameof(HeeftTeam), ex);
+                    throw new DomeinException(nameof(HeeftSpeler), ex);
                 }
             }
         }
-        public bool HeeftLetsel(Letsel letsel)
+        public void SchrijfSpeler(Speler speler)
         {
-            string sql = "SELECT COUNT(*) FROM Letsel WHERE speler_id=@speler_id AND letselType=@letselType AND letselDatum=@letselDatum AND notities=@notities";
+            string sql = "INSERT INTO Speler(naam ,rugNummer,positie,team_id) VALUES (@naam,@rugNummer,@positie,@team_id)";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -81,81 +87,16 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@speler_id", letsel.Speler.SpelerID);
-                    cmd.Parameters.AddWithValue("@letselType", letsel.LetselType);
-                    cmd.Parameters.AddWithValue("@letselDatum", letsel.LetselDatum);
-                    cmd.Parameters.AddWithValue("@notities", letsel.Notities);
-                    int n = (int)cmd.ExecuteScalar();
-                    if (n > 0) return true; else return false;
-                }
-                catch (Exception ex)
-                {
-                    throw new SpelerException(nameof(HeeftLetsel), ex);
-                }
-            }
-        }
-        public void SchrijfLetsel(Letsel letsel)
-        {
-            string sql = "INSERT INTO Letsel(speler_id, letselType, letselDatum, notities) VALUES (@speler_id, @letselType, @letselDatum, @notities)";
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
-            {
-                try
-                {
-                    conn.Open();
-                    cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@speler_id", letsel.Speler.SpelerID);
-                    cmd.Parameters.AddWithValue("@letselType", letsel.LetselType);
-                    cmd.Parameters.AddWithValue("@letselDatum", letsel.LetselDatum);
-                    cmd.Parameters.AddWithValue("@notities", letsel.Notities);
+
+                    cmd.Parameters.AddWithValue("@naam", speler.Naam);
+                    cmd.Parameters.AddWithValue("@rugNummer", speler.RugNummer);
+                    cmd.Parameters.AddWithValue("@positie", speler.Positie);
+                    cmd.Parameters.AddWithValue("@team_id", speler.Team.TeamID);
                     cmd.ExecuteNonQuery();
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException(nameof(SchrijfLetsel), ex);
-                }
-            }
-        }
-        public bool HeeftTraining(Training training)
-        {
-            string sql = "SELECT COUNT(*) FROM Training WHERE datum=@datum AND thema=@thema AND team_id=@team_id";
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
-            {
-                try
-                {
-                    conn.Open();
-                    cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@datum", training.Datum);
-                    cmd.Parameters.AddWithValue("@thema", training.Thema);
-                    cmd.Parameters.AddWithValue("@team_id", training.Team.TeamID);
-                    int n = (int)cmd.ExecuteScalar();
-                    if (n > 0) return true; else return false;
-                }
-                catch (Exception ex)
-                {
-                    throw new SpelerException(nameof(HeeftTraining), ex);
-                }
-            }
-        }
-        public void SchrijfTraining(Training training)
-        {
-            string sql = "INSERT INTO Training(datum, thema, team_id) VALUES (@datum, @thema, @team_id)";
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
-            {
-                try
-                {
-                    conn.Open();
-                    cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@datum", training.Datum);
-                    cmd.Parameters.AddWithValue("@thema", training.Thema);
-                    cmd.Parameters.AddWithValue("@team_id", training.Team.TeamID);
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    throw new SpelerException(nameof(SchrijfTraining), ex);
+                    throw new DomeinException(nameof(SchrijfSpeler), ex);
                 }
             }
         }
@@ -179,7 +120,7 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException(nameof(SchrijfWijzigingSpeler), ex);
+                    throw new DomeinException(nameof(SchrijfWijzigingSpeler), ex);
                 }
             }
         }
@@ -198,7 +139,249 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException(nameof(VerwijderSpelerVanDB), ex);
+                    throw new DomeinException(nameof(VerwijderSpelerVanDB), ex);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Training
+
+        public bool HeeftTraining(Training training)
+        {
+            string sql = "SELECT COUNT(*) FROM Training WHERE datum=@datum AND thema=@thema AND team_id=@team_id";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@datum", training.Datum);
+                    cmd.Parameters.AddWithValue("@thema", training.Thema);
+                    cmd.Parameters.AddWithValue("@team_id", training.Team.TeamID);
+                    int n = (int)cmd.ExecuteScalar();
+                    if (n > 0) return true; else return false;
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(HeeftTraining), ex);
+                }
+            }
+        }
+        public void SchrijfTraining(Training training)
+        {
+            string sql = "INSERT INTO Training(datum, thema, team_id) VALUES (@datum, @thema, @team_id)";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@datum", training.Datum);
+                    cmd.Parameters.AddWithValue("@thema", training.Thema);
+                    cmd.Parameters.AddWithValue("@team_id", training.Team.TeamID);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(SchrijfTraining), ex);
+                }
+            }
+        }
+        public void SchrijfWijzigingTraining(Training oldTraining, Training newTraining)
+        {
+            string sql = "UPDATE Training SET id=@newId, datum =@newDatum,thema = @newThema,team_id =@newTeamID WHERE id = @oldId";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@newId", newTraining.TrainingID);
+                    cmd.Parameters.AddWithValue("@newDatum", newTraining.Datum);
+                    cmd.Parameters.AddWithValue("@newThema", newTraining.Thema);
+                    cmd.Parameters.AddWithValue("@newTeamID", newTraining.Team.TeamID);
+
+                    cmd.Parameters.AddWithValue("@oldId", oldTraining.TrainingID);
+
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(SchrijfWijzigingTraining), ex);
+                }
+            }
+        }
+        public List<Training> LeesTrainingenVanTeam(int teamId)
+        {
+            string SQL = "SELECT * FROM Training where team_id = @team_id";
+            List<Training> trainingen = new List<Training>();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = SQL;
+                    cmd.Parameters.AddWithValue("@team_id", teamId);
+                    IDataReader reader = cmd.ExecuteReader();
+
+                    List<Team> teams = LeesTeams();
+                    Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+
+                    foreach (Team team in teams)
+                    {
+                        dicTeams.Add(team.TeamID, team);
+                    }
+
+                    while (reader.Read())
+                    {
+                        trainingen.Add(new Training((int)reader["id"], (DateTime)reader["datum"], (string)reader["thema"], dicTeams[(int)reader["team_id"]]));
+                    }
+                    return trainingen;
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(LeesTrainingenVanTeam), ex);
+                }
+            }
+        }
+        public Training LeesTrainingOmAanwezighedenTeMaken(Training trainingZonderID)
+        {
+            Training trainingMetID = null;
+            string SQL = "SELECT id, datum, thema, team_id FROM Training WHERE datum = @datum AND thema = @thema AND team_id = @teamId;";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = SQL;
+                    IDataReader reader = cmd.ExecuteReader();
+
+                    List<Team> teams = LeesTeams();
+                    Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+
+                    foreach (Team team in teams)
+                    {
+                        dicTeams.Add(team.TeamID, team);
+                    }
+
+                    while (reader.Read())
+                    {
+                        trainingMetID = new Training((int)reader["id"], (DateTime)reader["datum"], (string)reader["thema"], dicTeams[(int)reader["team_id"]]);
+                    }
+                    return trainingMetID;
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(LeesTrainingOmAanwezighedenTeMaken), ex);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Aanwezigheid
+
+        public bool HeeftAanwezigheid(Aanwezigheid aanwezigheid)
+        {
+            string sql = "SELECT COUNT(*) FROM Aanwezigheid WHERE speler_id = @speler_id AND training_id = @training_id;";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("@speler_id", aanwezigheid.Speler.SpelerID);
+                    cmd.Parameters.AddWithValue("@training_id", aanwezigheid.Training.TrainingID);
+
+                    int n = (int)cmd.ExecuteScalar();
+                    if (n > 0) return true; else return false;
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(HeeftAanwezigheid), ex);
+                }
+            }
+        }
+        public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid)
+        {
+            string sql = "INSERT INTO Aanwezigheid(speler_id ,training_id,isAanwezig,heeftAfwezigheidGemeld,redenAfwezigheid) VALUES (@speler_id ,@training_id,@isAanwezig,@heeftAfwezigheidGemeld,@redenAfwezigheid)";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.AddWithValue("speler_id", aanwezigheid.Speler.SpelerID);
+                    cmd.Parameters.AddWithValue("training_id", aanwezigheid.Training.TrainingID);
+                    cmd.Parameters.AddWithValue("isAanwezig", aanwezigheid.IsAanwezig);
+                    cmd.Parameters.AddWithValue("heeftAfwezigheidGemeld", aanwezigheid.HeeftAfwezigheidGemeld);
+                    cmd.Parameters.AddWithValue("redenAfwezigheid", aanwezigheid.RedenAfwezigheid);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(SchrijfAanwezigheid), ex);
+                }
+            }
+        }
+        public void LeesEnSchrijfAanwezigheidPerTrainingInTXT(Training training, Team team, string filePath)
+        {
+            string SQL = @"SELECT 
+                                Speler.naam AS 'Speler Naam',
+                                Training.datum AS 'Training datum',
+                                Training.thema AS 'Training thema',
+                                Aanwezigheid.isAanwezig AS 'Was aanwezig',
+                                Aanwezigheid.heeftAfwezigheidGemeld AS 'Heeft afwezigheid gemeld',
+                                Aanwezigheid.redenAfwezigheid AS 'Reden afwezigheid'
+                            FROM 
+                                Aanwezigheid
+                            INNER JOIN 
+                                Speler ON Aanwezigheid.speler_id = Speler.id
+                            INNER JOIN 
+                                Training ON Aanwezigheid.training_id = Training.id
+                            WHERE 
+                                Training.id = @training_id AND Training.team_id = @team_id;";
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = SQL;
+                    cmd.Parameters.AddWithValue("@training_id", training.TrainingID);
+                    cmd.Parameters.AddWithValue("@team_id", team.TeamID);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    using (StreamWriter writer = new StreamWriter(filePath))
+                    {
+                        writer.WriteLine("Speler Naam | Training Datum | Training Thema | Was Aanwezig | Heeft Afwezigheid Gemeld | Reden Afwezigheid");
+                        writer.WriteLine(new string('-', 80));
+                        while (reader.Read())
+                        {
+                            string spelerNaam = reader.GetString(0);
+                            DateTime trainingDatum = reader.GetDateTime(1);
+                            string trainingThema = reader.GetString(2);
+                            bool wasAanwezig = reader.GetBoolean(3);
+                            bool heeftAfwezigheidGemeld = reader.GetBoolean(4);
+                            string redenAfwezigheid = reader.IsDBNull(5) ? "N/A" : reader.GetString(5);
+
+
+                            writer.WriteLine($"{spelerNaam} | {trainingDatum} | {trainingThema} | {wasAanwezig} | {heeftAfwezigheidGemeld} | {redenAfwezigheid}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(LeesEnSchrijfAanwezigheidPerTrainingInTXT), ex);
                 }
             }
         }
@@ -223,10 +406,15 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException(nameof(LeesPercentageAanwezigheid), ex);
+                    throw new DomeinException(nameof(LeesPercentageAanwezigheid), ex);
                 }
             }
         }
+
+        #endregion
+
+        #region Team
+
         public List<Team> LeesTeams()
         {
             string SQL = "SELECT * FROM Team";
@@ -241,7 +429,7 @@ namespace AanwezigheidDL_SQL
                     IDataReader reader = cmd.ExecuteReader();
 
                     List<Coach> coaches = LeesCoaches();
-                    Dictionary<int, Coach> dicCoach = new Dictionary<int, Coach>();
+                    Dictionary<int?, Coach> dicCoach = new Dictionary<int?, Coach>();
                     foreach (Coach coach in coaches)
                     {
                         dicCoach.Add(coach.CoachID, coach);
@@ -255,14 +443,13 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException("LeesTeams", ex);
+                    throw new DomeinException(nameof(LeesTeams), ex);
                 }
             }
         }
-
-        public bool HeeftSpeler(Speler speler)
+        public bool HeeftTeam(Team team)
         {
-            string sql = "SELECT COUNT(*) FROM Speler WHERE naam = @naam  AND rugNummer = @rugNummer AND positie = @positie AND team_id = @team_id;";
+            string sql = "SELECT COUNT(*) FROM Team WHERE naam=@naam AND coach_id=@coach_id";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -270,28 +457,25 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@naam", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@rugNummer", SqlDbType.Int));
-                    cmd.Parameters.Add(new SqlParameter("@positie", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@team_id", SqlDbType.Int));
-
-                    cmd.Parameters["@naam"].Value = speler.Naam;
-                    cmd.Parameters["@rugNummer"].Value = speler.RugNummer;
-                    cmd.Parameters["@positie"].Value = speler.Positie;
-                    cmd.Parameters["@team_id"].Value = speler.Team.TeamID;
-
+                    cmd.Parameters.AddWithValue("@naam", team.TeamNaam);
+                    cmd.Parameters.AddWithValue("@coach_id", team.Coach.CoachID);
                     int n = (int)cmd.ExecuteScalar();
                     if (n > 0) return true; else return false;
                 }
-                catch (SpelerException ex)
+                catch (Exception ex)
                 {
-                    throw new SpelerException("HeeftSpeler", ex);
+                    throw new DomeinException(nameof(HeeftTeam), ex);
                 }
             }
         }
-        public void SchrijfSpeler(Speler speler)
+
+        #endregion
+
+        #region Letsel
+
+        public bool HeeftLetsel(Letsel letsel)
         {
-            string sql = "INSERT INTO Speler(naam ,rugNummer,positie,team_id) VALUES (@naam,@rugNummer,@positie,@team_id)";
+            string sql = "SELECT COUNT(*) FROM Letsel WHERE speler_id=@speler_id AND letselType=@letselType AND letselDatum=@letselDatum AND notities=@notities";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -299,57 +483,22 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@naam", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@rugNummer", SqlDbType.Int));
-                    cmd.Parameters.Add(new SqlParameter("@positie", SqlDbType.VarChar));
-                    cmd.Parameters.Add(new SqlParameter("@team_id", SqlDbType.Int));
-
-                    cmd.Parameters["@naam"].Value = speler.Naam;
-                    cmd.Parameters["@rugNummer"].Value = speler.RugNummer;
-                    cmd.Parameters["@positie"].Value = speler.Positie;
-                    cmd.Parameters["@team_id"].Value = speler.Team.TeamID;
-                    cmd.ExecuteNonQuery();
-                }
-                catch (SpelerException ex)
-                {
-                    throw new SpelerException("SchrijfSpeler", ex);
-                }
-            }
-        }
-        public bool HeeftAanwezigheid(Aanwezigheid aanwezigheid)
-        {
-            string sql = "SELECT COUNT(*) FROM Aanwezigheid WHERE speler_id = @speler_id AND training_id = @training_id AND isAanwezig = @isAanwezig AND heeftAfwezigheidGemeld = @heeftAfwezigheidGemeld AND redenAfwezigheid= @redenAfwezigheid;";
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
-            {
-                try
-                {
-                    conn.Open();
-                    cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@speler_id", SqlDbType.Int));
-                    cmd.Parameters.Add(new SqlParameter("@training_id", SqlDbType.Int));
-                    cmd.Parameters.Add(new SqlParameter("@isAanwezig", SqlDbType.Bit));
-                    cmd.Parameters.Add(new SqlParameter("@heeftAfwezigheidGemeld", SqlDbType.Bit));
-                    cmd.Parameters.Add(new SqlParameter("@redenAfwezigheid", SqlDbType.VarChar));
-
-                    cmd.Parameters["@speler_id"].Value = aanwezigheid.Speler.SpelerID;
-                    cmd.Parameters["@training_id"].Value = aanwezigheid.Training.TrainingID;
-                    cmd.Parameters["@isAanwezig"].Value = aanwezigheid.IsAanwezig;
-                    cmd.Parameters["@heeftAfwezigheidGemeld"].Value = aanwezigheid.HeeftAfwezigheidGemeld;
-                    cmd.Parameters["@redenAfwezigheid"].Value = aanwezigheid.RedenAfwezigheid;
-
+                    cmd.Parameters.AddWithValue("@speler_id", letsel.Speler.SpelerID);
+                    cmd.Parameters.AddWithValue("@letselType", letsel.LetselType);
+                    cmd.Parameters.AddWithValue("@letselDatum", letsel.LetselDatum);
+                    cmd.Parameters.AddWithValue("@notities", letsel.Notities);
                     int n = (int)cmd.ExecuteScalar();
                     if (n > 0) return true; else return false;
                 }
-                catch (SpelerException ex)
+                catch (Exception ex)
                 {
-                    throw new SpelerException("HeeftAanwezigheid", ex);
+                    throw new DomeinException(nameof(HeeftLetsel), ex);
                 }
             }
         }
-        public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid)
+        public void SchrijfLetsel(Letsel letsel)
         {
-            string sql = "INSERT INTO Aanwezigheid(speler_id ,training_id,isAanwezig,heeftAfwezigheidGemeld,redenAfwezigheid) VALUES (@speler_id ,@training_id,@isAanwezig,@heeftAfwezigheidGemeld,@redenAfwezigheid)";
+            string sql = "INSERT INTO Letsel(speler_id, letselType, letselDatum, notities) VALUES (@speler_id, @letselType, @letselDatum, @notities)";
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -357,53 +506,24 @@ namespace AanwezigheidDL_SQL
                 {
                     conn.Open();
                     cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@speler_id", SqlDbType.Int));
-                    cmd.Parameters.Add(new SqlParameter("@training_id", SqlDbType.Int));
-                    cmd.Parameters.Add(new SqlParameter("@isAanwezig", SqlDbType.Bit));
-                    cmd.Parameters.Add(new SqlParameter("@heeftAfwezigheidGemeld", SqlDbType.Bit));
-                    cmd.Parameters.Add(new SqlParameter("@redenAfwezigheid", SqlDbType.VarChar));
-
-                    cmd.Parameters["@speler_id"].Value = aanwezigheid.Speler.SpelerID;
-                    cmd.Parameters["@training_id"].Value = aanwezigheid.Training.TrainingID;
-                    cmd.Parameters["@isAanwezig"].Value = aanwezigheid.IsAanwezig;
-                    cmd.Parameters["@heeftAfwezigheidGemeld"].Value = aanwezigheid.HeeftAfwezigheidGemeld;
-                    cmd.Parameters["@redenAfwezigheid"].Value = aanwezigheid.RedenAfwezigheid;
+                    cmd.Parameters.AddWithValue("@speler_id", letsel.Speler.SpelerID);
+                    cmd.Parameters.AddWithValue("@letselType", letsel.LetselType);
+                    cmd.Parameters.AddWithValue("@letselDatum", letsel.LetselDatum);
+                    cmd.Parameters.AddWithValue("@notities", letsel.Notities);
                     cmd.ExecuteNonQuery();
                 }
-                catch (SpelerException ex)
+                catch (Exception ex)
                 {
-                    throw new SpelerException("SchrijfAanwezigheid", ex);
+                    throw new DomeinException(nameof(SchrijfLetsel), ex);
                 }
             }
         }
-        public void SchrijfWijzigingTraining(Training oldTraining, Training newTraining)
-        {
-            string sql = "UPDATE Training SET id=@newId, datum =@newDatum,thema = @newThema,team_id =@newTeamID WHERE id = @oldId";
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
-            {
-                try
-                {
-                    conn.Open();
-                    cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@newId", newTraining.TrainingID);
-                    cmd.Parameters.AddWithValue("@newDatum", newTraining.Datum);
-                    cmd.Parameters.AddWithValue("@newThema", newTraining.Thema);
-                    cmd.Parameters.AddWithValue("@newTeamID", newTraining.Team.TeamID);
-                    
-                    cmd.Parameters.AddWithValue("@oldId", oldTraining.TrainingID);
 
-                    cmd.ExecuteNonQuery();
-                }
-                catch (SpelerException ex)
-                {
-                    throw new SpelerException("SchrijfWijzigingTraining", ex);
-                }
-            }
-        }
+        #endregion
+
+        
 
         #region Nog niet gebruiken
-
         public void SchrijfTeam(Team team)
         {
             string sql = "INSERT INTO Team(naam, coach_id) VALUES (@naam, @coach_id)";
@@ -420,7 +540,7 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException(nameof(SchrijfTeam), ex);
+                    throw new DomeinException(nameof(SchrijfTeam), ex);
                 }
             }
         }
@@ -444,27 +564,7 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException("LeesCoaches", ex);
-                }
-            }
-        }
-        public void SchrijfCoach(Coach coach)
-        {
-            string sql = "INSERT INTO Coach(naam) VALUES (@naam)";
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
-            {
-                try
-                {
-                    conn.Open();
-                    cmd.CommandText = sql;
-                    cmd.Parameters.Add(new SqlParameter("@naam", SqlDbType.VarChar));
-                    cmd.Parameters["@naam"].Value = coach.Naam;
-                    cmd.ExecuteNonQuery();
-                }
-                catch (SpelerException ex)
-                {
-                    throw new SpelerException("SchrijfCoach", ex);
+                    throw new DomeinException(nameof(LeesCoaches), ex);
                 }
             }
         }
@@ -484,9 +584,29 @@ namespace AanwezigheidDL_SQL
                     int n = (int)cmd.ExecuteScalar();
                     if (n > 0) return true; else return false;
                 }
-                catch (SpelerException ex)
+                catch (Exception ex)
                 {
-                    throw new SpelerException("HeeftCoach", ex);
+                    throw new DomeinException(nameof(HeeftCoach), ex);
+                }
+            }
+        }
+        public void SchrijfCoach(Coach coach)
+        {
+            string sql = "INSERT INTO Coach(naam) VALUES (@naam)";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = sql;
+                    cmd.Parameters.Add(new SqlParameter("@naam", SqlDbType.VarChar));
+                    cmd.Parameters["@naam"].Value = coach.Naam;
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(SchrijfCoach), ex);
                 }
             }
         }
@@ -519,7 +639,7 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException(nameof(LeesSpelers), ex);
+                    throw new DomeinException(nameof(LeesSpelers), ex);
                 }
             }
         }
@@ -537,7 +657,7 @@ namespace AanwezigheidDL_SQL
                     IDataReader reader = cmd.ExecuteReader();
 
                     List<Speler> spelers = LeesSpelers();
-                    Dictionary<int, Speler> dicSpelers = new Dictionary<int, Speler>();
+                    Dictionary<int?, Speler> dicSpelers = new Dictionary<int?, Speler>();
 
                     foreach (Speler speler in spelers)
                     {
@@ -550,9 +670,9 @@ namespace AanwezigheidDL_SQL
                     }
                     return letsels;
                 }
-                catch (SpelerException ex)
+                catch (Exception ex)
                 {
-                    throw new SpelerException("LeesLetsels", ex);
+                    throw new DomeinException(nameof(LeesLetsels), ex);
                 }
             }
         }
@@ -570,7 +690,7 @@ namespace AanwezigheidDL_SQL
                     IDataReader reader = cmd.ExecuteReader();
 
                     List<Team> teams = LeesTeams();
-                    Dictionary<int, Team> dicTeams = new Dictionary<int, Team>();
+                    Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
 
                     foreach (Team team in teams)
                     {
@@ -585,7 +705,7 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException("LeesTrainingen", ex);
+                    throw new DomeinException(nameof(LeesTrainingen), ex);
                 }
             }
         }
@@ -624,7 +744,7 @@ namespace AanwezigheidDL_SQL
                 }
                 catch (Exception ex)
                 {
-                    throw new SpelerException(nameof(LeesAanwezigheden), ex);
+                    throw new DomeinException(nameof(LeesAanwezigheden), ex);
                 }
             }
         }
