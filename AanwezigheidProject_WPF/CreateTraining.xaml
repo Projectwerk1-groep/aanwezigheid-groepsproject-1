@@ -151,8 +151,8 @@
                             </ScrollViewer>
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Button Content="Speler Toevoegen" FontSize="16" Background="SeaGreen" Height="40" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
-                                <Button Content="Speler Verwijderen" FontSize="16" Background="IndianRed" Height="40" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                <Button Content="Speler Toevoegen" FontSize="16" Background="SeaGreen" Height="Auto" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                <Button Content="Speler Verwijderen" FontSize="16" Background="IndianRed" Height="Auto" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
                             </StackPanel>
 
                         </StackPanel>
@@ -194,8 +194,8 @@
                             </ScrollViewer>
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Button Content="Speler Toevoegen" FontSize="16" Background="SeaGreen" Height="40" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
-                                <Button Content="Speler Verwijderen" FontSize="16" Background="IndianRed" Height="40" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                <Button Content="Speler Toevoegen" FontSize="16" Background="SeaGreen" Height="Auto" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
+                                <Button Content="Speler Verwijderen" FontSize="16" Background="IndianRed" Height="Auto" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
                             </StackPanel>
 
                         </StackPanel>
@@ -237,8 +237,8 @@
                             </ScrollViewer>
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Button Content="Traininggegevens Tonen" FontSize="16" Background="SeaGreen" Height="40" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
-                                <Button Content="Export naar Tekstbestand" FontSize="16" Background="RoyalBlue" Height="40" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                <Button Content="Traininggegevens Tonen" FontSize="16" Background="SeaGreen" Height="Auto" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
+                                <Button Content="Export naar Tekstbestand" FontSize="16" Background="RoyalBlue" Height="Auto" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
                             </StackPanel>
 
                         </StackPanel>
