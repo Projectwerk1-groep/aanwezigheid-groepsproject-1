@@ -26,21 +26,21 @@ namespace AanwezigheidProject_WPF
 
             // Gebruikersinvoer
             string enteredUsername = UsernameTextBox.Text;
-            string enteredPassword = PasswordBox.Password;
+            //string enteredPassword = PasswordBox.Password;
 
             // Controleren of gebruikersnaam en wachtwoord kloppen
-            if (enteredUsername == correctUsername && enteredPassword == correctPassword)
-            {
-                MessageBox.Show("Succesvol ingelogd!", "Ingelogd", MessageBoxButton.OK, MessageBoxImage.Information);
-                // Open volgende scherm of sluit huidig scherm
-                CreateTraining createTrainingWindow = new CreateTraining();
-                createTrainingWindow.Show();
-                this.Close();
-            }
-            else
-            {
-                ErrorTextBlock.Text = "Onjuiste gebruikersnaam of wachtwoord!";
-            }
+            //if (enteredUsername == correctUsername && enteredPassword == correctPassword)
+            //{
+            //    MessageBox.Show("Succesvol ingelogd!", "Ingelogd", MessageBoxButton.OK, MessageBoxImage.Information);
+            //    // Open volgende scherm of sluit huidig scherm
+            //    CreateTraining createTrainingWindow = new CreateTraining();
+            //    createTrainingWindow.Show();
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    ErrorTextBlock.Text = "Onjuiste gebruikersnaam of wachtwoord!";
+            //}
         }
     }
 }
