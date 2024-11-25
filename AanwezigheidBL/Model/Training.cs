@@ -30,6 +30,6 @@ namespace AanwezigheidBL.Model
         public DateTime Datum { get; set; }
         public string Thema { get; set; }
         public Team Team { get; set; }
-        public List<Speler> Spelers { get; set; }
+       // public List<Speler> Spelers { get; set; }
     }
 }
