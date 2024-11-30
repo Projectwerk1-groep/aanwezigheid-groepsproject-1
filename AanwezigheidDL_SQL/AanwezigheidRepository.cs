@@ -18,7 +18,7 @@ namespace AanwezigheidDL_SQL
 
 
         #region Speler
-
+        //LeesSpelersVanTeam: Deze methode leest alle spelers van een specifiek team uit de database. Deze methode kan worden gebruikt op de details-pagina in de UI en ook op de overzicht-pagina.
         public List<Speler> LeesSpelersVanTeam(int teamID)
         {
             string SQL = "SELECT * FROM Speler WHERE team_id = @team_id;";
@@ -100,6 +100,7 @@ namespace AanwezigheidDL_SQL
                 }
             }
         }
+        //SchrijfWijzigingSpeler: Deze methode neemt een Speler-object vóór de wijziging en een nieuw Speler-object (na de wijziging) om de gegevens van de speler aan te passen, met uitzondering van het ID. En kan worden gebruikt op de overzicht-pagina in de UI.
         public void SchrijfWijzigingSpeler(Speler oldSpeler, Speler newSpeler)
         {
             string sql = "UPDATE Speler SET naam = @newNaam, rugNummer = @newRugNummer, team_id = @newTeamID WHERE id = @id";
@@ -124,6 +125,7 @@ namespace AanwezigheidDL_SQL
                 }
             }
         }
+        //VerwijderSpelerVanDB: Deze methode verwijdert de speler uit de database. Het kan worden gebruikt op beide pagina's in de UI.
         public void VerwijderSpelerVanDB(Speler speler)
         {
             string sql = "DELETE FROM Speler WHERE id = @id;";
@@ -147,7 +149,7 @@ namespace AanwezigheidDL_SQL
         #endregion
 
         #region Training
-
+        //HeeftTraining: Deze methode controleert of deze training al in de database bestaat voordat we deze aan de database toevoegen.
         public bool HeeftTraining(Training training)
         {
             string sql = "SELECT COUNT(*) FROM Training WHERE datum=@datum AND thema=@thema AND team_id=@team_id";
@@ -170,6 +172,7 @@ namespace AanwezigheidDL_SQL
                 }
             }
         }
+        //SchrijfTraining: Deze methode voegt een training toe aan de database en kan worden gebruikt op beide pagina's in de UI.
         public void SchrijfTraining(Training training)
         {
             string sql = "INSERT INTO Training(datum, thema, team_id) VALUES (@datum, @thema, @team_id)";
@@ -385,6 +388,7 @@ namespace AanwezigheidDL_SQL
                 }
             }
         }
+        //LeesPercentageAanwezigheid: Deze methode berekent het aanwezigheidspercentage van een speler bij de trainingendoor het aantal trainingen dat hij heeft bijgewoond te delen door het totale aantal trainingen dat hij had kunnen bijwonen. Deze methode kan worden gebruikt op de details-pagina in de UI.
         public double LeesPercentageAanwezigheid(int spelerID)
         {
             string SQL = "SELECT CAST(SUM(CASE WHEN isAanwezig = 1 THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*) * 100 AS aanwezigheidPercentage FROM Aanwezigheid WHERE speler_id = @speler_id;";
@@ -447,6 +451,7 @@ namespace AanwezigheidDL_SQL
                 }
             }
         }
+        //HeeftTeam: Deze methode controleert of dit team al in de database bestaat voordat we details eraan toevoegen.
         public bool HeeftTeam(Team team)
         {
             string sql = "SELECT COUNT(*) FROM Team WHERE naam=@naam AND coach_id=@coach_id";
@@ -473,6 +478,7 @@ namespace AanwezigheidDL_SQL
 
         #region Letsel
 
+        //HeeftLetsel: Deze methode controleert of dit letsel al in de database bestaat voordat we een nieuw letsel toevoegen.
         public bool HeeftLetsel(Letsel letsel)
         {
             string sql = "SELECT COUNT(*) FROM Letsel WHERE speler_id=@speler_id AND letselType=@letselType AND letselDatum=@letselDatum AND notities=@notities";
@@ -496,6 +502,7 @@ namespace AanwezigheidDL_SQL
                 }
             }
         }
+        //SchrijfLetsel: Deze methode voegt een letsel toe aan een speler in de database.
         public void SchrijfLetsel(Letsel letsel)
         {
             string sql = "INSERT INTO Letsel(speler_id, letselType, letselDatum, notities) VALUES (@speler_id, @letselType, @letselDatum, @notities)";
