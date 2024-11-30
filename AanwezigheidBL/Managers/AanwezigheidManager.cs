@@ -20,6 +20,7 @@ namespace AanwezigheidBL.Managers
 
         #region Speler
 
+        //VoegSpelerToe: Deze methode voegt een speler toe aan de database.
         public void VoegSpelerToe(Speler speler)
         {
             try
@@ -57,6 +58,7 @@ namespace AanwezigheidBL.Managers
 
             }
         }
+        //GeefSpelersVanTeem: Deze methode retourneert een lijst met spelers van een specifiek team.
         public List<Speler> GeefSpelersVanTeem(int teamID)
         {
             try
@@ -88,6 +90,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(VoegTrainingToe), ex);
             }
         }
+        //WijzigTraining: Deze methode neemt een Training-object vóór de wijziging en een bijgewerkt Training-object (na de wijziging) en vervangt het oude object door het nieuwe in de database.
         public void WijzigTraining(Training oldTraining, Training newTraining)
         {
             try
@@ -99,6 +102,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(WijzigTraining), ex);
             }
         }
+        //GeefTrainingenVanTeam: Deze methode retourneert alle eerdere trainingen van een specifiek team en kan worden gebruikt op de details-pagina.
         public List<Training> GeefTrainingenVanTeam(int teamID)
         {
             try
@@ -114,6 +118,7 @@ namespace AanwezigheidBL.Managers
         #endregion
 
         #region Aanwezigheid
+        //VoegAanwezigheidToe: Deze methode voegt de aanwezigheid toe aan de database.
         public void VoegAanwezigheidToe(Aanwezigheid aanwezigheid)
         {
             try
@@ -126,6 +131,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(VoegAanwezigheidToe), ex);
             }
         }
+        //ExportAanwezigheidNaarTXT:Deze methode exporteert de aanwezigheidsgegevens van elke speler, gebaseerd op het team en de training, naar een tekstbestand
         public void ExportAanwezigheidNaarTXT(Training training, Team team, string filePath)
         {
             try
@@ -137,6 +143,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(ExportAanwezigheidNaarTXT), ex);
             }
         }
+        //GeefPercentageAanwezigheid: Deze methode berekent het aanwezigheidspercentage van een speler bij de trainingendoor het aantal trainingen dat hij heeft bijgewoond te delen door het totale aantal trainingen dat hij had kunnen bijwonen. Deze methode kan worden gebruikt op de details-pagina in de UI.
         public double GeefPercentageAanwezigheid(int spelerID)
         {
             try
@@ -188,6 +195,7 @@ namespace AanwezigheidBL.Managers
             }
 
         }
+        //GeefTeams: Deze methode controleert of dit team al in de database bestaat voordat we details eraan toevoegen.
         public List<Team> GeefTeams()
         {
             try
