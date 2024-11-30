@@ -114,6 +114,18 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(GeefTrainingenVanTeam), ex);
             }
         }
+        //LeesTraining: Deze methode retourneert één specifieke training op basis van het ID.
+        public Training GeefTraining(int trainingId)
+        {
+            try
+            {
+                return _aanwezigheidRepository.LeesTraining(trainingId);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(GeefTraining), ex);
+            }
+        }
 
         #endregion
 

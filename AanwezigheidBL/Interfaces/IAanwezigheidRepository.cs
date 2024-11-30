@@ -29,6 +29,7 @@ namespace AanwezigheidBL.Interfaces
         public void SchrijfWijzigingTraining(Training oldTraining, Training newTraining);
         public List<Training> LeesTrainingenVanTeam(int teamId);
         public void LeesEnSchrijfAanwezigheidPerTrainingInTXT(Training training, Team team, string filePath);
+        public Training LeesTraining(int trainingId);
 
         #region Nog niet gebruiken
 

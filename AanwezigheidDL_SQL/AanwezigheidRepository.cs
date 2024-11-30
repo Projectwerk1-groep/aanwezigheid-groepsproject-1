@@ -291,6 +291,41 @@ namespace AanwezigheidDL_SQL
                 }
             }
         }
+        //LeesTraining: Deze methode retourneert één specifieke training op basis van het ID.
+        public Training LeesTraining(int trainingId)
+        {
+            Training training = null;
+            string SQL = "SELECT * FROM Training where id = @training_id";
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                try
+                {
+                    conn.Open();
+                    cmd.CommandText = SQL;
+                    cmd.Parameters.AddWithValue("@training_id", trainingId);
+                    IDataReader reader = cmd.ExecuteReader();
+
+                    List<Team> teams = LeesTeams();
+                    Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+
+                    foreach (Team team in teams)
+                    {
+                        dicTeams.Add(team.TeamID, team);
+                    }
+
+                    while (reader.Read())
+                    {
+                        training = new Training((int)reader["id"], (DateTime)reader["datum"], (string)reader["thema"], dicTeams[(int)reader["team_id"]]);
+                    }
+                    return training;
+                }
+                catch (Exception ex)
+                {
+                    throw new DomeinException(nameof(LeesTraining), ex);
+                }
+            }
+        }
 
         #endregion
 
