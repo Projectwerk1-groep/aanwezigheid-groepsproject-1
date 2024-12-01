@@ -54,7 +54,7 @@ namespace AanwezigheidBL.Managers
 
             }
         }
-        public List<Speler> GeefSpelersVanTeem(int teamID)
+        public List<Speler> GeefSpelersVanTeam(int teamID)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace AanwezigheidBL.Managers
             }
             catch (Exception ex)
             {
-                throw new ManagerException(nameof(GeefSpelersVanTeem), ex);
+                throw new ManagerException(nameof(GeefSpelersVanTeam), ex);
             }
         }
 
@@ -149,7 +149,7 @@ namespace AanwezigheidBL.Managers
         #endregion
 
        
-        public void VoegTrainingMetZijnAanwezigheidToe(Training training, List<(Speler speler, bool isAanwezig, bool heeftAfwezigheidGemeld, RedenVanAfwezigheid redenAfwezigheid, string letselType, DateTime letselDatum, string notities)> listOmAanwezighedenTeMaken)
+        public void VoegTrainingMetAanwezigheidToe(Training training, List<(Speler speler, bool isAanwezig, bool heeftAfwezigheidGemeld, RedenVanAfwezigheid redenAfwezigheid, string letselType, DateTime letselDatum, string notities)> listOmAanwezighedenTeMaken)
         {
             try
             {
@@ -177,7 +177,7 @@ namespace AanwezigheidBL.Managers
             }
             catch (Exception ex)
             {
-                throw new ManagerException(nameof(VoegTrainingMetZijnAanwezigheidToe), ex);
+                throw new ManagerException(nameof(VoegTrainingMetAanwezigheidToe), ex);
             }
 
         }
@@ -235,11 +235,6 @@ namespace AanwezigheidBL.Managers
             }
         }
         #endregion
-
-
-
-
-
 
     }
 }
