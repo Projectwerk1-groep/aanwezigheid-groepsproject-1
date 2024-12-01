@@ -84,7 +84,7 @@
 
                     <TextBlock x:Name="CoachNameTextBlock" Margin="10,0,0,0" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Naam Trainer: " />
                     <ComboBox x:Name="TeamComboBox" Width="200" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,0" Text="Team"/>
-                    <Button Content="Logout" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>
+                    <!--<Button Content="Logout" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>-->
 
                 </DockPanel>
             </materialDesign:Card>
