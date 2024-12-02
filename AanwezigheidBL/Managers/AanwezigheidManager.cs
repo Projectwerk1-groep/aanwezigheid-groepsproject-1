@@ -19,6 +19,8 @@ namespace AanwezigheidBL.Managers
         }
 
         #region Speler
+
+        //VoegSpelerToe: Deze methode voegt een speler toe aan de database.
         public void VoegSpelerToe(Speler speler)
         {
             try
@@ -31,6 +33,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(VoegSpelerToe), ex);
             }
         }
+        //WijzigSpeler: Deze methode neemt een Speler-object vóór de wijziging en een nieuw Speler-object (na de wijziging) om de gegevens van de speler aan te passen, met uitzondering van het ID. En kan worden gebruikt op de overzicht-pagina in de UI.
         public void WijzigSpeler(Speler oldSpeler, Speler newSpeler)
         {
             try
@@ -42,6 +45,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(WijzigSpeler), ex);
             }
         }
+        //VerwijderSpeler: Deze methode verwijdert de speler uit de database. Het kan worden gebruikt op beide pagina's in de UI.
         public void VerwijderSpeler(Speler speler)
         {
             try
@@ -54,7 +58,8 @@ namespace AanwezigheidBL.Managers
 
             }
         }
-        public List<Speler> GeefSpelersVanTeam(int teamID)
+        //GeefSpelersVanTeem: Deze methode retourneert een lijst met spelers van een specifiek team.
+        public List<Speler> GeefSpelersVanTeem(int teamID)
         {
             try
             {
@@ -70,6 +75,7 @@ namespace AanwezigheidBL.Managers
 
         #region Training
 
+        //VoegTrainingToe: Deze methode voegt een training toe aan de database nadat eerst wordt gecontroleerd of deze al bestaat. Als er al een training met dezelfde datum, thema en details bestaat, voorkomt deze methode dat deze aan de database wordt toegevoegd.
         public void VoegTrainingToe(Training training)
         {
             try
@@ -84,6 +90,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(VoegTrainingToe), ex);
             }
         }
+        //WijzigTraining: Deze methode neemt een Training-object vóór de wijziging en een bijgewerkt Training-object (na de wijziging) en vervangt het oude object door het nieuwe in de database.
         public void WijzigTraining(Training oldTraining, Training newTraining)
         {
             try
@@ -95,6 +102,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(WijzigTraining), ex);
             }
         }
+        //GeefTrainingenVanTeam: Deze methode retourneert alle eerdere trainingen van een specifiek team en kan worden gebruikt op de details-pagina.
         public List<Training> GeefTrainingenVanTeam(int teamID)
         {
             try
@@ -106,10 +114,23 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(GeefTrainingenVanTeam), ex);
             }
         }
+        //LeesTraining: Deze methode retourneert één specifieke training op basis van het ID.
+        public Training GeefTraining(int trainingId)
+        {
+            try
+            {
+                return _aanwezigheidRepository.LeesTraining(trainingId);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(GeefTraining), ex);
+            }
+        }
 
         #endregion
 
         #region Aanwezigheid
+        //VoegAanwezigheidToe: Deze methode voegt de aanwezigheid toe aan de database.
         public void VoegAanwezigheidToe(Aanwezigheid aanwezigheid)
         {
             try
@@ -122,6 +143,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(VoegAanwezigheidToe), ex);
             }
         }
+        //ExportAanwezigheidNaarTXT:Deze methode exporteert de aanwezigheidsgegevens van elke speler, gebaseerd op het team en de training, naar een tekstbestand
         public void ExportAanwezigheidNaarTXT(Training training, Team team, string filePath)
         {
             try
@@ -133,6 +155,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(ExportAanwezigheidNaarTXT), ex);
             }
         }
+        //GeefPercentageAanwezigheid: Deze methode berekent het aanwezigheidspercentage van een speler bij de trainingendoor het aantal trainingen dat hij heeft bijgewoond te delen door het totale aantal trainingen dat hij had kunnen bijwonen. Deze methode kan worden gebruikt op de details-pagina in de UI.
         public double GeefPercentageAanwezigheid(int spelerID)
         {
             try
@@ -148,8 +171,11 @@ namespace AanwezigheidBL.Managers
 
         #endregion
 
-       
-        public void VoegTrainingMetAanwezigheidToe(Training training, List<(Speler speler, bool isAanwezig, bool heeftAfwezigheidGemeld, RedenVanAfwezigheid redenAfwezigheid, string letselType, DateTime letselDatum, string notities)> listOmAanwezighedenTeMaken)
+        /* VoegTrainingMetZijnAanwezigheidToe:Deze methode wordt gebruikt op de overzicht-pagina in de UI. Ze voegt één training en meerdere aanwezigheden toe (afhankelijk van het aantal spelers in het geselecteerde team) aan de database.
+                                              Nadat de training is toegevoegd, wordt deze opgehaald uit de database om het ID te verkrijgen dat door de database wordt gegenereerd.
+                                              Met deze training, inclusief het verkregen ID, kunnen we de aanwezigheid voor elke speler afzonderlijk toevoegen, gebaseerd op de informatie die beschikbaar is in de regels van de ListBox "Overzicht van spelers".
+                                              Daarom leest deze methode de inhoud van deze ListBox en zet deze over naar de database.*/
+        public void VoegTrainingMetZijnAanwezigheidToe(Training training, List<(Speler speler, bool isAanwezig, bool heeftAfwezigheidGemeld, RedenVanAfwezigheid redenAfwezigheid, string letselType, DateTime letselDatum, string notities)> listOmAanwezighedenTeMaken)
         {
             try
             {
@@ -181,6 +207,7 @@ namespace AanwezigheidBL.Managers
             }
 
         }
+        //GeefTeams: Deze methode controleert of dit team al in de database bestaat voordat we details eraan toevoegen.
         public List<Team> GeefTeams()
         {
             try
@@ -192,6 +219,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(GeefTeams), ex);
             }
         }
+        //VoegLetselToe:Deze methode voegt een letsel toe aan een speler in de database.
         public void VoegLetselToe(Letsel letsel)
         {
             try
