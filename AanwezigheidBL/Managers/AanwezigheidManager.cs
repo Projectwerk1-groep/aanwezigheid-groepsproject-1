@@ -220,7 +220,7 @@ namespace AanwezigheidBL.Managers
             }
         }
 
-        public List<Team> GeefTeamsPerCoach(int? coachId)
+        public List<Team> GeefTeamsPerCoach(int coachId)
         {
             try
             {

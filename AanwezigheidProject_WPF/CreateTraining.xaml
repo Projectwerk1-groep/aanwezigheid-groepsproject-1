@@ -64,6 +64,7 @@
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
 
     <Grid>
@@ -150,8 +151,16 @@
 
                                     <Label Content="Overzicht Spelers:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" Target="{Binding ElementName=OverzichtSpelers_ListBox}" />
                                     <!--Implementeer SelectionChanged="OverzichtSpelers_ListBox_SelectionChanged"-->
-                                    <ListBox x:Name="OverzichtSpelers_ListBox" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Spelers}" />
-
+                                    <ListBox x:Name="OverzichtSpelers_ListBox" ItemsSource="{Binding Spelers}" SelectionChanged="OverzichtSpelers_ListBox_SelectionChanged" Margin="0,0,0,10" Padding="10" BorderBrush="#333">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding}" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                    <TextBox Text="{Binding ., Mode=TwoWay}" Visibility="{Binding IsEditing, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
                                 </StackPanel>
                             </ScrollViewer>
 
@@ -211,7 +220,7 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    
+
                                     <Button Grid.Column="0" Content="Speler Toevoegen" Background="SeaGreen" Height="40" Padding="10" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
                                     <Button Grid.Column="1" Content="Speler Verwijderen" Background="IndianRed" Height="40" Padding="10" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
                                 </Grid>

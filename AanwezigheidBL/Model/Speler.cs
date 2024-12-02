@@ -11,22 +11,20 @@ namespace AanwezigheidBL.Model
     public class Speler
     {
         //We zullen hier een constructor toevoegen met alle eigenschappen van deze klasse, omdat we het nodig hebben om het aanmaken van objecten in de data-laag te vergemakkelijken.
-        public Speler(int spelerID, string naam, int rugNummer, string positie, Team team)
+        public Speler(int spelerID, string naam, int rugNummer, Team team)
         {
             SpelerID = spelerID;
             Naam = naam;
             RugNummer = rugNummer;
-            Positie = positie;
             Team = team;
         }
-        public Speler(string naam, int rugNummer, string positie, Team team)
+        public Speler(string naam, int rugNummer, Team team)
         {
             Naam = naam;
             RugNummer = rugNummer;
-            Positie = positie;
             Team = team;
         }
-        public int? SpelerID;
+        public int SpelerID;
         private string _naam;
         public string Naam
         {
@@ -50,7 +48,6 @@ namespace AanwezigheidBL.Model
                 _rugNummer = value;
             }
         }
-        public string Positie { get; set; }
         public Team Team { get; set; }
     }
 }

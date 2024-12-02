@@ -26,7 +26,7 @@ namespace AanwezigheidBL.Model
             Team = team;
         }
 
-        public int? TrainingID;
+        public int TrainingID;
         public DateTime Datum { get; set; }
         public string Thema { get; set; }
         public Team Team { get; set; }

@@ -21,7 +21,7 @@ namespace AanwezigheidBL.Interfaces
         void VerwijderSpelerVanDB(Speler speler);
         double LeesPercentageAanwezigheid(int spelerID); //Aanpassen
         List<Team> LeesTeams();
-        List<Team> LeesTeamsPerCoach(int? coachId);
+        List<Team> LeesTeamsPerCoach(int coachId);
         Training LeesTrainingOmAanwezighedenTeMaken(Training trainingZonderID); //Aanpassen
         bool HeeftSpeler(Speler speler);
         void SchrijfSpeler(Speler speler);

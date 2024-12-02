@@ -2,6 +2,7 @@
 using AanwezigheidBL.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static MaterialDesignThemes.Wpf.Theme;
 
+
 namespace AanwezigheidProject_WPF
 {
     /// <summary>
@@ -23,6 +25,9 @@ namespace AanwezigheidProject_WPF
     public partial class CreateTraining : Window
     {
         public AanwezigheidManager _manager;
+
+        public ObservableCollection<Team> Teams = [];
+        public ObservableCollection<Speler> Spelers = [];
 
         public CreateTraining(AanwezigheidManager manager)
         {
@@ -40,11 +45,20 @@ namespace AanwezigheidProject_WPF
             CoachNameTBl.Text = coach.Naam;
 
             //Teams PER trainer inlezen
-            List<string> teams = _manager.GeefTeamsPerCoach(coach.CoachID).Select(x => x.TeamNaam).ToList();
+            Teams.Clear();
+            List<Team> teams = _manager.GeefTeamsPerCoach(coach.CoachID).ToList();
+            teams.ForEach(t => {Teams.Add(t);});
+            foreach (Team team in teams) { 
+                Teams.Add(team);
+            }
+
             TeamComboBox.ItemsSource = teams;
 
             // Stel een standaardwaarde in
-            TeamComboBox.SelectedItem = teams[0];
+            TeamComboBox.SelectedItem = teams.FirstOrDefault();
+
+            //Toon de namen van de teams
+            TeamComboBox.DisplayMemberPath = "TeamNaam";
         }
 
         private void TeamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -52,12 +66,23 @@ namespace AanwezigheidProject_WPF
             // Stel het geselecteerde item in als de nieuwe standaardwaarde
             if (TeamComboBox.SelectedItem != null)
             {
-                TeamComboBox.SelectedItem = TeamComboBox.SelectedItem;
+                Team? selectedTeam = TeamComboBox.SelectedItem as Team;
 
-                Team_Naam_TextBlock.Text = TeamComboBox.SelectedItem.ToString();
+                TeamComboBox.SelectedItem = selectedTeam;
 
-                Historiek_Team_Naam_TextBlock.Text = TeamComboBox.SelectedItem.ToString();
+                Team_Naam_TextBlock.Text = selectedTeam.ToString();
+
+                Historiek_Team_Naam_TextBlock.Text = selectedTeam.ToString();
+
+                Spelers.Clear();
+                List<Speler> spelers = _manager.GeefSpelersVanTeam(selectedTeam.TeamID);
+                spelers.ForEach(s => { Spelers.Add(s);});
             }
+        }
+
+        private void OverzichtSpelers_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
         private void VoeSpelerToe_Click(object sender, RoutedEventArgs e)
@@ -84,6 +109,17 @@ namespace AanwezigheidProject_WPF
         {
             
         }
+
+        private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var textBlock = sender as TextBlock;
+            textBlock.Visibility = Visibility.Collapsed;
+
+            var textBox = (System.Windows.Controls.TextBox)VisualTreeHelper.GetParent(textBlock);
+            textBox.Visibility = Visibility.Visible;
+            textBox.Focus();
+        }
+
 
         private void ShowSelectedDate_Click(object sender, RoutedEventArgs e)
         {

@@ -33,7 +33,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
-                Dictionary<int?, Team> dicTeams = new();
+                Dictionary<int, Team> dicTeams = new();
 
                 foreach (Team team in teams)
                 {
@@ -42,7 +42,7 @@ namespace AanwezigheidDL_SQL
 
                 while (reader.Read())
                 {
-                    spelers.Add(new Speler((int)reader["id"], (string)reader["naam"], (int)reader["rugNummer"], (string)reader["positie"], dicTeams[(int)reader["team_id"]]));
+                    spelers.Add(new Speler((int)reader["id"], (string)reader["naam"], (int)reader["rugNummer"], dicTeams[(int)reader["team_id"]]));
                 }
                 return spelers;
             }
@@ -54,7 +54,7 @@ namespace AanwezigheidDL_SQL
         //HeeftSpeler: Deze methode controleert of deze speler al in de database bestaat voordat we deze aan de database toevoegen.
         public bool HeeftSpeler(Speler speler)
         {
-            string sql = "SELECT COUNT(*) FROM Speler WHERE naam = @naam  AND rugNummer = @rugNummer AND positie = @positie AND team_id = @team_id;";
+            string sql = "SELECT COUNT(*) FROM Speler WHERE naam = @naam  AND rugNummer = @rugNummer AND team_id = @team_id;";
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
@@ -63,7 +63,6 @@ namespace AanwezigheidDL_SQL
                 cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue("@naam", speler.Naam);
                 cmd.Parameters.AddWithValue("@rugNummer", speler.RugNummer);
-                cmd.Parameters.AddWithValue("@positie", speler.Positie);
                 cmd.Parameters.AddWithValue("@team_id", speler.Team.TeamID);
 
                 int n = (int)cmd.ExecuteScalar();
@@ -77,7 +76,7 @@ namespace AanwezigheidDL_SQL
         //SchrijfSpeler: Deze methode voegt een speler toe aan de database en kan worden gebruikt op beide pagina's in de UI.
         public void SchrijfSpeler(Speler speler)
         {
-            string sql = "INSERT INTO Speler(naam ,rugNummer,positie,team_id) VALUES (@naam,@rugNummer,@positie,@team_id)";
+            string sql = "INSERT INTO Speler(naam ,rugNummer,team_id) VALUES (@naam,@rugNummer,@team_id)";
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
@@ -87,7 +86,6 @@ namespace AanwezigheidDL_SQL
 
                 cmd.Parameters.AddWithValue("@naam", speler.Naam);
                 cmd.Parameters.AddWithValue("@rugNummer", speler.RugNummer);
-                cmd.Parameters.AddWithValue("@positie", speler.Positie);
                 cmd.Parameters.AddWithValue("@team_id", speler.Team.TeamID);
                 cmd.ExecuteNonQuery();
             }
@@ -108,7 +106,6 @@ namespace AanwezigheidDL_SQL
                 cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue("@newNaam", newSpeler.Naam);
                 cmd.Parameters.AddWithValue("@newRugNummer", newSpeler.RugNummer);
-                cmd.Parameters.AddWithValue("@newPositie", newSpeler.Positie);
                 cmd.Parameters.AddWithValue("@newTeamID", newSpeler.Team.TeamID);
                 cmd.Parameters.AddWithValue("@id", oldSpeler.SpelerID);
 
@@ -221,7 +218,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
-                Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+                Dictionary<int, Team> dicTeams = new Dictionary<int, Team>();
 
                 foreach (Team team in teams)
                 {
@@ -253,7 +250,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
-                Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+                Dictionary<int, Team> dicTeams = new Dictionary<int, Team>();
 
                 foreach (Team team in teams)
                 {
@@ -286,7 +283,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
-                Dictionary<int?, Team> dicTeams = new();
+                Dictionary<int, Team> dicTeams = new();
 
                 foreach (Team team in teams)
                 {
@@ -444,7 +441,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Coach> coaches = LeesCoaches();
-                Dictionary<int?, Coach> dicCoach = new Dictionary<int?, Coach>();
+                Dictionary<int, Coach> dicCoach = new();
                 foreach (Coach coach in coaches)
                 {
                     dicCoach.Add(coach.CoachID, coach);
@@ -462,8 +459,8 @@ namespace AanwezigheidDL_SQL
             }
         }
 
-        //LeesTeamsPerCoach: Deze methode retourneert een lijst van teams die in de database staan en kan worden gebruikt op beide pagina's in de UI.
-        public List<Team> LeesTeamsPerCoach(int? coachId)
+        //LeesTeamsPerCoach: Deze methode retourneert een lijst van teams in de database die tot een bepaalde coach behoren en kan worden gebruikt op beide pagina's in de UI.
+        public List<Team> LeesTeamsPerCoach(int coachId)
         {
             string SQL = "SELECT * FROM Team WHERE coach_id=@coach_id";
             List<Team> teams = [];
@@ -477,7 +474,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Coach> coaches = LeesCoaches();
-                Dictionary<int?, Coach> dicCoach = new();
+                Dictionary<int, Coach> dicCoach = new();
                 foreach (Coach coach in coaches)
                 {
                     dicCoach.Add(coach.CoachID, coach);
@@ -661,7 +658,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
-                Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+                Dictionary<int, Team> dicTeams = new Dictionary<int, Team>();
 
                 foreach (Team team in teams)
                 {
@@ -670,7 +667,7 @@ namespace AanwezigheidDL_SQL
 
                 while (reader.Read())
                 {
-                    spelers.Add(new Speler((int)reader["id"], (string)reader["naam"], (int)reader["rugNummer"], (string)reader["positie"], dicTeams[(int)reader["team_id"]]));
+                    spelers.Add(new Speler((int)reader["id"], (string)reader["naam"], (int)reader["rugNummer"], dicTeams[(int)reader["team_id"]]));
                 }
                 return spelers;
             }
@@ -692,7 +689,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Speler> spelers = LeesSpelers();
-                Dictionary<int?, Speler> dicSpelers = new Dictionary<int?, Speler>();
+                Dictionary<int, Speler> dicSpelers = new Dictionary<int, Speler>();
 
                 foreach (Speler speler in spelers)
                 {
@@ -723,7 +720,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
-                Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+                Dictionary<int, Team> dicTeams = new Dictionary<int, Team>();
 
                 foreach (Team team in teams)
                 {
@@ -754,14 +751,14 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Speler> spelers = LeesSpelers();
-                Dictionary<int?, Speler> dicSpelers = new Dictionary<int?, Speler>();
+                Dictionary<int, Speler> dicSpelers = new Dictionary<int, Speler>();
                 foreach (Speler speler in spelers)
                 {
                     dicSpelers.Add(speler.SpelerID, speler);
                 }
 
                 List<Training> trainingen = LeesTrainingen();
-                Dictionary<int?, Training> dicTrainingen = new Dictionary<int?, Training>();
+                Dictionary<int, Training> dicTrainingen = new Dictionary<int, Training>();
                 foreach (Training training in trainingen)
                 {
                     dicTrainingen.Add(training.TrainingID, training);

@@ -19,7 +19,7 @@ namespace AanwezigheidBL.Model
         {
             Naam = naam;
         }
-        public int? CoachID;
+        public int CoachID;
 
         private string _naam;
 

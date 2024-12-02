@@ -26,7 +26,7 @@ namespace AanwezigheidBL.Model
             Notities = notities;
         }
 
-        public int? LetselID;
+        public int LetselID;
         public Speler Speler { get; set; }
         public string? LetselType { get; set; }
         public DateTime? LetselDatum { get; set; }
