@@ -19,7 +19,7 @@ namespace AanwezigheidBL.Model
             HeeftAfwezigheidGemeld = heeftAfwezigheidGemeld;
             RedenAfwezigheid = redenAfwezigheid;
         }
-        public Aanwezigheid() { }
+        //public Aanwezigheid() { }
 
         public Speler Speler { get; set; }
         public Training Training { get; set; }

@@ -58,8 +58,8 @@ namespace AanwezigheidBL.Managers
 
             }
         }
-        //GeefSpelersVanTeem: Deze methode retourneert een lijst met spelers van een specifiek team.
-        public List<Speler> GeefSpelersVanTeem(int teamID)
+        //GeefSpelersVanTeam: Deze methode retourneert een lijst met spelers van een specifiek team.
+        public List<Speler> GeefSpelersVanTeam(int teamID)
         {
             try
             {
@@ -171,11 +171,11 @@ namespace AanwezigheidBL.Managers
 
         #endregion
 
-        /* VoegTrainingMetZijnAanwezigheidToe:Deze methode wordt gebruikt op de overzicht-pagina in de UI. Ze voegt één training en meerdere aanwezigheden toe (afhankelijk van het aantal spelers in het geselecteerde team) aan de database.
+        /* VoegTrainingMetAanwezigheidToe:Deze methode wordt gebruikt op de overzicht-pagina in de UI. Ze voegt één training en meerdere aanwezigheden toe (afhankelijk van het aantal spelers in het geselecteerde team) aan de database.
                                               Nadat de training is toegevoegd, wordt deze opgehaald uit de database om het ID te verkrijgen dat door de database wordt gegenereerd.
                                               Met deze training, inclusief het verkregen ID, kunnen we de aanwezigheid voor elke speler afzonderlijk toevoegen, gebaseerd op de informatie die beschikbaar is in de regels van de ListBox "Overzicht van spelers".
                                               Daarom leest deze methode de inhoud van deze ListBox en zet deze over naar de database.*/
-        public void VoegTrainingMetZijnAanwezigheidToe(Training training, List<(Speler speler, bool isAanwezig, bool heeftAfwezigheidGemeld, RedenVanAfwezigheid redenAfwezigheid, string letselType, DateTime letselDatum, string notities)> listOmAanwezighedenTeMaken)
+        public void VoegTrainingMetAanwezigheidToe(Training training, List<(Speler speler, bool isAanwezig, bool heeftAfwezigheidGemeld, RedenVanAfwezigheid redenAfwezigheid, string letselType, DateTime letselDatum, string notities)> listOmAanwezighedenTeMaken)
         {
             try
             {
@@ -190,13 +190,13 @@ namespace AanwezigheidBL.Managers
                         case RedenVanAfwezigheid.Ziekte: reden = "Ziekte"; break;
                         case RedenVanAfwezigheid.Andere: reden = "Andere"; break;
                     }
-                    Aanwezigheid aanwezigheid = new Aanwezigheid(lijn.speler, trainingMetID, lijn.isAanwezig, lijn.heeftAfwezigheidGemeld, reden);
+                    Aanwezigheid aanwezigheid = new(lijn.speler, trainingMetID, lijn.isAanwezig, lijn.heeftAfwezigheidGemeld, reden);
                     VoegAanwezigheidToe(aanwezigheid);
 
 
                     if (lijn.redenAfwezigheid == RedenVanAfwezigheid.Letsel)
                     {
-                        Letsel letsel = new Letsel(lijn.speler, lijn.letselType, lijn.letselDatum, lijn.notities);
+                        Letsel letsel = new(lijn.speler, lijn.letselType, lijn.letselDatum, lijn.notities);
                         VoegLetselToe(letsel);
                     }
                 }

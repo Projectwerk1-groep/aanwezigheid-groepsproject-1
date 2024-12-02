@@ -21,6 +21,10 @@ namespace AanwezigheidProject_WPF
             IAanwezigheidRepository AanwezigheidRepo = new AanwezigheidRepository(connectionstring);
 
             AanwezigheidManager manager = new(AanwezigheidRepo);
+
+            CreateTraining createTrainingWindow = new(manager);
+
+            createTrainingWindow.Show();
         }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

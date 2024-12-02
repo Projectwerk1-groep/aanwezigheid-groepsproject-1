@@ -25,9 +25,12 @@ namespace AanwezigheidProject_WPF
         public CreateTraining(AanwezigheidManager manager)
         {
             _manager = manager;
-
             InitializeComponent();
+            WindowState = WindowState.Maximized;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
+
+
 
         private void ShowSelectedDate_Click(object sender, RoutedEventArgs e)
         {

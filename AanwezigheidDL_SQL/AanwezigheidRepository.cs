@@ -22,7 +22,7 @@ namespace AanwezigheidDL_SQL
         public List<Speler> LeesSpelersVanTeam(int teamID)
         {
             string SQL = "SELECT * FROM Speler WHERE team_id = @team_id;";
-            List<Speler> spelers = new();
+            List<Speler> spelers = [];
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
@@ -33,7 +33,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
-                Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+                Dictionary<int?, Team> dicTeams = new();
 
                 foreach (Team team in teams)
                 {
@@ -210,7 +210,7 @@ namespace AanwezigheidDL_SQL
         public List<Training> LeesTrainingenVanTeam(int teamId)
         {
             string SQL = "SELECT * FROM Training where team_id = @team_id";
-            List<Training> trainingen = new();
+            List<Training> trainingen = [];
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
@@ -276,34 +276,32 @@ namespace AanwezigheidDL_SQL
         {
             Training training = null;
             string SQL = "SELECT * FROM Training where id = @training_id";
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
+            using SqlConnection conn = new(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
             {
-                try
+                conn.Open();
+                cmd.CommandText = SQL;
+                cmd.Parameters.AddWithValue("@training_id", trainingId);
+                IDataReader reader = cmd.ExecuteReader();
+
+                List<Team> teams = LeesTeams();
+                Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+
+                foreach (Team team in teams)
                 {
-                    conn.Open();
-                    cmd.CommandText = SQL;
-                    cmd.Parameters.AddWithValue("@training_id", trainingId);
-                    IDataReader reader = cmd.ExecuteReader();
-
-                    List<Team> teams = LeesTeams();
-                    Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
-
-                    foreach (Team team in teams)
-                    {
-                        dicTeams.Add(team.TeamID, team);
-                    }
-
-                    while (reader.Read())
-                    {
-                        training = new Training((int)reader["id"], (DateTime)reader["datum"], (string)reader["thema"], dicTeams[(int)reader["team_id"]]);
-                    }
-                    return training;
+                    dicTeams.Add(team.TeamID, team);
                 }
-                catch (Exception ex)
+
+                while (reader.Read())
                 {
-                    throw new DomeinException(nameof(LeesTraining), ex);
+                    training = new Training((int)reader["id"], (DateTime)reader["datum"], (string)reader["thema"], dicTeams[(int)reader["team_id"]]);
                 }
+                return training;
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(LeesTraining), ex);
             }
         }
 
@@ -436,55 +434,51 @@ namespace AanwezigheidDL_SQL
         public List<Team> LeesTeams()
         {
             string SQL = "SELECT * FROM Team";
-            List<Team> teams = new List<Team>();
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
+            List<Team> teams = [];
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
             {
-                try
-                {
-                    conn.Open();
-                    cmd.CommandText = SQL;
-                    IDataReader reader = cmd.ExecuteReader();
+                conn.Open();
+                cmd.CommandText = SQL;
+                IDataReader reader = cmd.ExecuteReader();
 
-                    List<Coach> coaches = LeesCoaches();
-                    Dictionary<int?, Coach> dicCoach = new Dictionary<int?, Coach>();
-                    foreach (Coach coach in coaches)
-                    {
-                        dicCoach.Add(coach.CoachID, coach);
-                    }
-
-                    while (reader.Read())
-                    {
-                        teams.Add(new Team((int)reader["id"], (string)reader["naam"], dicCoach[(int)reader["coach_id"]]));
-                    }
-                    return teams;
-                }
-                catch (Exception ex)
+                List<Coach> coaches = LeesCoaches();
+                Dictionary<int?, Coach> dicCoach = new Dictionary<int?, Coach>();
+                foreach (Coach coach in coaches)
                 {
-                    throw new DomeinException(nameof(LeesTeams), ex);
+                    dicCoach.Add(coach.CoachID, coach);
                 }
+
+                while (reader.Read())
+                {
+                    teams.Add(new Team((int)reader["id"], (string)reader["naam"], dicCoach[(int)reader["coach_id"]]));
+                }
+                return teams;
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(LeesTeams), ex);
             }
         }
         //HeeftTeam: Deze methode controleert of dit team al in de database bestaat voordat we details eraan toevoegen.
         public bool HeeftTeam(Team team)
         {
             string sql = "SELECT COUNT(*) FROM Team WHERE naam=@naam AND coach_id=@coach_id";
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
+            using SqlConnection conn = new(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
             {
-                try
-                {
-                    conn.Open();
-                    cmd.CommandText = sql;
-                    cmd.Parameters.AddWithValue("@naam", team.TeamNaam);
-                    cmd.Parameters.AddWithValue("@coach_id", team.Coach.CoachID);
-                    int n = (int)cmd.ExecuteScalar();
-                    if (n > 0) return true; else return false;
-                }
-                catch (Exception ex)
-                {
-                    throw new DomeinException(nameof(HeeftTeam), ex);
-                }
+                conn.Open();
+                cmd.CommandText = sql;
+                cmd.Parameters.AddWithValue("@naam", team.TeamNaam);
+                cmd.Parameters.AddWithValue("@coach_id", team.Coach.CoachID);
+                int n = (int)cmd.ExecuteScalar();
+                if (n > 0) return true; else return false;
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(HeeftTeam), ex);
             }
         }
 
