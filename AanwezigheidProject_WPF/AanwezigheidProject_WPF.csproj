@@ -13,4 +13,9 @@
     <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AanwezigheidBL\AanwezigheidBL.csproj" />
+    <ProjectReference Include="..\AanwezigheidDL_SQL\AanwezigheidDL_SQL.csproj" />
+  </ItemGroup>
+
 </Project>

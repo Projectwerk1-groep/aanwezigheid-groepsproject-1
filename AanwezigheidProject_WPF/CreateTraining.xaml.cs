@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AanwezigheidBL.Managers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,8 +20,12 @@ namespace AanwezigheidProject_WPF
     /// </summary>
     public partial class CreateTraining: Window
     {
-        public CreateTraining()
+        public AanwezigheidManager _manager;
+
+        public CreateTraining(AanwezigheidManager manager)
         {
+            _manager = manager;
+
             InitializeComponent();
         }
 
