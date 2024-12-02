@@ -219,6 +219,31 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(GeefTeams), ex);
             }
         }
+
+        public List<Team> GeefTeamsPerCoach(int? coachId)
+        {
+            try
+            {
+                return _aanwezigheidRepository.LeesTeamsPerCoach(coachId);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(GeefTeamsPerCoach), ex);
+            }
+        }
+
+        public List<Coach> GeefCoaches()
+        {
+            try
+            {
+                return _aanwezigheidRepository.LeesCoaches();
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(GeefCoaches), ex);
+            }
+        }
+
         //VoegLetselToe:Deze methode voegt een letsel toe aan een speler in de database.
         public void VoegLetselToe(Letsel letsel)
         {

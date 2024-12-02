@@ -11,36 +11,37 @@ namespace AanwezigheidBL.Interfaces
 {
     public interface IAanwezigheidRepository
     {
-        public List<Speler> LeesSpelersVanTeam(int teamID); //Aanpassen
-        public bool HeeftTeam(Team team);
-        public bool HeeftLetsel(Letsel letsel);
-        public void SchrijfLetsel(Letsel letsel);
-        public bool HeeftTraining(Training training);
-        public void SchrijfTraining(Training training);
-        public void SchrijfWijzigingSpeler(Speler oldSpeler, Speler newSpeler);
-        public void VerwijderSpelerVanDB(Speler speler);
-        public double LeesPercentageAanwezigheid(int spelerID); //Aanpassen
-        public List<Team> LeesTeams();
-        public Training LeesTrainingOmAanwezighedenTeMaken(Training trainingZonderID); //Aanpassen
-        public bool HeeftSpeler(Speler speler);
-        public void SchrijfSpeler(Speler speler);
-        public bool HeeftAanwezigheid(Aanwezigheid aanwezigheid);
-        public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid);
-        public void SchrijfWijzigingTraining(Training oldTraining, Training newTraining);
-        public List<Training> LeesTrainingenVanTeam(int teamId);
-        public void LeesEnSchrijfAanwezigheidPerTrainingInTXT(Training training, Team team, string filePath);
-        public Training LeesTraining(int trainingId);
+        List<Speler> LeesSpelersVanTeam(int teamID); //Aanpassen
+        bool HeeftTeam(Team team);
+        bool HeeftLetsel(Letsel letsel);
+        void SchrijfLetsel(Letsel letsel);
+        bool HeeftTraining(Training training);
+        void SchrijfTraining(Training training);
+        void SchrijfWijzigingSpeler(Speler oldSpeler, Speler newSpeler);
+        void VerwijderSpelerVanDB(Speler speler);
+        double LeesPercentageAanwezigheid(int spelerID); //Aanpassen
+        List<Team> LeesTeams();
+        List<Team> LeesTeamsPerCoach(int? coachId);
+        Training LeesTrainingOmAanwezighedenTeMaken(Training trainingZonderID); //Aanpassen
+        bool HeeftSpeler(Speler speler);
+        void SchrijfSpeler(Speler speler);
+        bool HeeftAanwezigheid(Aanwezigheid aanwezigheid);
+        void SchrijfAanwezigheid(Aanwezigheid aanwezigheid);
+        void SchrijfWijzigingTraining(Training oldTraining, Training newTraining);
+        List<Training> LeesTrainingenVanTeam(int teamId);
+        void LeesEnSchrijfAanwezigheidPerTrainingInTXT(Training training, Team team, string filePath);
+        Training LeesTraining(int trainingId);
 
         #region Nog niet gebruiken
 
-        public void SchrijfTeam(Team team);
-        public List<Coach> LeesCoaches();
-        public void SchrijfCoach(Coach coach);
-        public bool HeeftCoach(Coach coach);
-        public List<Speler> LeesSpelers();
-        public List<Letsel> LeesLetsels();
-        public List<Training> LeesTrainingen();
-        public List<Aanwezigheid> LeesAanwezigheden();
+        void SchrijfTeam(Team team);
+        List<Coach> LeesCoaches();
+        void SchrijfCoach(Coach coach);
+        bool HeeftCoach(Coach coach);
+        List<Speler> LeesSpelers();
+        List<Letsel> LeesLetsels();
+        List<Training> LeesTrainingen();
+        List<Aanwezigheid> LeesAanwezigheden();
 
 
 

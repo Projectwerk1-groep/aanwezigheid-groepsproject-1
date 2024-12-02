@@ -14,12 +14,12 @@
         <!-- Styles -->
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="15" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="15" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
         <Style TargetType="Button">
@@ -27,7 +27,7 @@
             <Setter Property="Padding" Value="10,5" />
             <Setter Property="Background" Value="{DynamicResource PrimaryHueMidBrush}" />
             <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -87,10 +87,10 @@
             <materialDesign:Card Grid.Row="0">
                 <DockPanel>
                     <Label Content="Trainer:" Target="{Binding ElementName=CoachNameTBl}" FontSize="20" />
-                    <TextBlock x:Name="CoachNameTBl" Margin="10,0" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <TextBlock x:Name="CoachNameTBl" Margin="10,0" FontSize="16" FontWeight="Medium" HorizontalAlignment="Left" VerticalAlignment="Center" />
                     <Label Content="Team:" FontSize="20" Margin="20,0,0,0" Target="{Binding ElementName=CoachNameTBl}" />
-                    <ComboBox x:Name="TeamComboBox" Width="200" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,0" Text="Team"/>
-                        <!--<Button Content="Logout" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>-->
+                    <ComboBox x:Name="TeamComboBox" Loaded="TeamComboBox_Loaded" SelectionChanged="TeamComboBox_SelectionChanged" FontSize="15" Width="200" Height="30" HorizontalAlignment="Left" Margin="30,0" Text="Team"/>
+                    <!--<Button Content="Logout" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>-->
                 </DockPanel>
             </materialDesign:Card>
 
@@ -113,19 +113,19 @@
                         <StackPanel>
 
                             <StackPanel >
-                                <Grid Margin="10,10,10,20">
+                                <Grid Margin="5,5,5,20">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0" x:Name="TrainingTextBlock" Margin="10,10" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Training: " />
-                                    <TextBlock Grid.Column="1" x:Name="AantalSpelersTextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal spelers: " />
-                                    <TextBlock Grid.Column="2" x:Name="AantalAanwezigTextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal aanwezigen: " />
+                                    <TextBlock Grid.Column="0" x:Name="TrainingTextBlock" Margin="0,10" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Training: " />
+                                    <TextBlock Grid.Column="1" x:Name="AantalSpelersTextBlock" Margin="10,10" VerticalAlignment="Center" Text="Aantal spelers: " />
+                                    <TextBlock Grid.Column="2" x:Name="AantalAanwezigTextBlock" Margin="10,10" VerticalAlignment="Center" Text="Aantal aanwezigen: " />
 
                                     <!-- DatePicker voor datumselectie -->
                                     <DatePicker Grid.Column="3" x:Name="MyDatePicker" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,10" Width="200">
@@ -139,8 +139,8 @@
                                         </DatePicker.CalendarStyle>
                                     </DatePicker>
 
-                                    <TextBox Grid.Column="4" Text="{Binding Remark, Mode=TwoWay}" VerticalAlignment="Center" Margin="10,20" materialDesign:HintAssist.Hint="Thema" FontSize="13" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="200" AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap" MaxLength="255"/>
-                                    <Button Grid.Column="5" Content="Opslaan" VerticalAlignment="Center" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>
+                                    <TextBox Grid.Column="4" Text="{Binding Remark, Mode=TwoWay}" VerticalAlignment="Center" Margin="10,20" materialDesign:HintAssist.Hint="Thema" FontSize="14" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="500" AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap" MaxLength="255"/>
+                                    <Button Grid.Column="5" Content="Opslaan" Click="TrainingOpslaan_Click" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>
 
                                 </Grid>
                             </StackPanel>
@@ -148,16 +148,23 @@
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel>
 
-                                    <TextBlock Text="Overzicht Spelers:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" />
+                                    <Label Content="Overzicht Spelers:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" Target="{Binding ElementName=OverzichtSpelers_ListBox}" />
                                     <!--Implementeer SelectionChanged="OverzichtSpelers_ListBox_SelectionChanged"-->
                                     <ListBox x:Name="OverzichtSpelers_ListBox" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Spelers}" />
 
                                 </StackPanel>
                             </ScrollViewer>
 
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Button Content="Speler Toevoegen" FontSize="16" Background="SeaGreen" Height="40" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
-                                <Button Content="Speler Verwijderen" FontSize="16" Background="IndianRed" Height="40" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                            <StackPanel>
+                                <Grid Margin="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Column="0" Content="Speler Toevoegen" Background="SeaGreen" Height="40" Padding="10" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                    <Button Grid.Column="1" Content="Speler Verwijderen" Background="IndianRed" Height="40" Padding="10" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                </Grid>
                             </StackPanel>
 
                         </StackPanel>
@@ -175,16 +182,16 @@
                     <materialDesign:Card>
                         <StackPanel>
                             <StackPanel >
-                                <Grid Margin="10,10,10,20">
+                                <Grid Margin="5,5,5,20">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0" x:Name="Team_TextBlock" Margin="10,10" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Team: " />
-                                    <TextBlock Grid.Column="1" x:Name="Team_Naam_TextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="*TeamNaam*" />
-                                    <TextBlock Grid.Column="2" x:Name="Team_AantalSpelers_TextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal spelers: " />
+                                    <Label Content="Team:" Grid.Column="0" Target="{Binding ElementName=Team_Naam_TextBlock}" Margin="0,10" />
+                                    <TextBlock Grid.Column="1" x:Name="Team_Naam_TextBlock" Margin="5,10" FontWeight="Medium" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" x:Name="Team_AantalSpelers_TextBlock" Margin="20,10"  VerticalAlignment="Center" Text="Aantal spelers: " />
                                 </Grid>
                             </StackPanel>
 
@@ -198,9 +205,16 @@
                                 </StackPanel>
                             </ScrollViewer>
 
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Button Content="Speler Toevoegen" FontSize="16" Background="SeaGreen" Height="40" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
-                                <Button Content="Speler Verwijderen" FontSize="16" Background="IndianRed" Height="40" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                            <StackPanel>
+                                <Grid Margin="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <Button Grid.Column="0" Content="Speler Toevoegen" Background="SeaGreen" Height="40" Padding="10" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
+                                    <Button Grid.Column="1" Content="Speler Verwijderen" Background="IndianRed" Height="40" Padding="10" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                </Grid>
                             </StackPanel>
 
                         </StackPanel>
@@ -218,16 +232,16 @@
                     <materialDesign:Card>
                         <StackPanel>
                             <StackPanel >
-                                <Grid Margin="10,10,10,20">
+                                <Grid Margin="5,5,5,20">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0" x:Name="Historiek_Team_TextBlock" Margin="10,10" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Team: " />
-                                    <TextBlock Grid.Column="1" x:Name="Historiek_Team_Naam_TextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="*TeamNaam*" />
-                                    <TextBlock Grid.Column="2" x:Name="Historiek_Team_AantalTrainingen_TextBlock" Margin="10,10" FontSize="15" VerticalAlignment="Center" Text="Aantal Trainingen: " />
+                                    <Label Grid.Column="0" Content="Team:" Target="{Binding ElementName=Historiek_Team_Naam_TextBlock}" Margin="0,10"  HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" x:Name="Historiek_Team_Naam_TextBlock" Margin="5,10" VerticalAlignment="Center" FontWeight="Medium" />
+                                    <TextBlock Grid.Column="2" x:Name="Historiek_Team_AantalTrainingen_TextBlock" Margin="10,10"  VerticalAlignment="Center" Text="Aantal Trainingen: " />
                                 </Grid>
                             </StackPanel>
 
@@ -241,9 +255,16 @@
                                 </StackPanel>
                             </ScrollViewer>
 
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Button Content="Traininggegevens Tonen" FontSize="16" Background="SeaGreen" Height="40" Padding="10" Margin="0,0,30,0" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
-                                <Button Content="Export naar Tekstbestand" FontSize="16" Background="RoyalBlue" Height="40" Padding="10" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                            <StackPanel>
+                                <Grid Margin="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Column="0" Content="Traininggegevens Tonen" Background="SeaGreen" Height="40" Padding="10" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
+                                    <Button Grid.Column="1" Content="Export naar Tekstbestand" Background="RoyalBlue" Height="40" Padding="10" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                </Grid>
                             </StackPanel>
 
                         </StackPanel>

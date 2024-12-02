@@ -209,7 +209,7 @@ namespace AanwezigheidDL_SQL
         //LeesTrainingenVanTeam: Deze methode retourneert alle eerdere trainingen van een specifiek team en kan worden gebruikt op de details-pagina.
         public List<Training> LeesTrainingenVanTeam(int teamId)
         {
-            string SQL = "SELECT * FROM Training where team_id = @team_id";
+            string SQL = "SELECT * FROM Training WHERE team_id = @team_id";
             List<Training> trainingen = [];
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
@@ -275,7 +275,7 @@ namespace AanwezigheidDL_SQL
         public Training LeesTraining(int trainingId)
         {
             Training training = null;
-            string SQL = "SELECT * FROM Training where id = @training_id";
+            string SQL = "SELECT * FROM Training WHERE id = @training_id";
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
@@ -286,7 +286,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
-                Dictionary<int?, Team> dicTeams = new Dictionary<int?, Team>();
+                Dictionary<int?, Team> dicTeams = new();
 
                 foreach (Team team in teams)
                 {
@@ -461,6 +461,40 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesTeams), ex);
             }
         }
+
+        //LeesTeamsPerCoach: Deze methode retourneert een lijst van teams die in de database staan en kan worden gebruikt op beide pagina's in de UI.
+        public List<Team> LeesTeamsPerCoach(int? coachId)
+        {
+            string SQL = "SELECT * FROM Team WHERE coach_id=@coach_id";
+            List<Team> teams = [];
+            using SqlConnection conn = new SqlConnection(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
+            {
+                conn.Open();
+                cmd.CommandText = SQL;
+                cmd.Parameters.AddWithValue("@coach_id", coachId);
+                IDataReader reader = cmd.ExecuteReader();
+
+                List<Coach> coaches = LeesCoaches();
+                Dictionary<int?, Coach> dicCoach = new();
+                foreach (Coach coach in coaches)
+                {
+                    dicCoach.Add(coach.CoachID, coach);
+                }
+
+                while (reader.Read())
+                {
+                    teams.Add(new Team((int)reader["id"], (string)reader["naam"], dicCoach[(int)reader["coach_id"]]));
+                }
+                return teams;
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(LeesTeamsPerCoach), ex);
+            }
+        }
+
         //HeeftTeam: Deze methode controleert of dit team al in de database bestaat voordat we details eraan toevoegen.
         public bool HeeftTeam(Team team)
         {
@@ -555,7 +589,7 @@ namespace AanwezigheidDL_SQL
         public List<Coach> LeesCoaches()
         {
             string SQL = "SELECT * FROM Coach";
-            List<Coach> Coaches = new List<Coach>();
+            List<Coach> Coaches = [];
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
@@ -574,6 +608,8 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesCoaches), ex);
             }
         }
+
+
         public bool HeeftCoach(Coach coach)
         {
             string sql = "SELECT COUNT(*) FROM Coach WHERE naam = @naam;";
