@@ -401,8 +401,8 @@ namespace AanwezigheidDL_SQL
         //LeesPercentageAanwezigheid: Deze methode berekent het aanwezigheidspercentage van een speler bij de trainingendoor het aantal trainingen dat hij heeft bijgewoond te delen door het totale aantal trainingen dat hij had kunnen bijwonen. Deze methode kan worden gebruikt op de details-pagina in de UI.
         public double LeesPercentageAanwezigheid(int spelerID)
         {
-            string SQL = "SELECT CAST(SUM(CASE WHEN isAanwezig = 1 THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*) * 100 AS aanwezigheidPercentage FROM Aanwezigheid WHERE speler_id = @speler_id;";
-            double percentage = 0;
+            string SQL = "SELECT CAST(SUM(CASE WHEN isAanwezig = 1 THEN 1 ELSE 0 END) AS FLOAT) / NULLIF(COUNT(*), 0) * 100 AS aanwezigheidPercentage FROM Aanwezigheid WHERE speler_id = @speler_id;";
+            //double percentage = 0;
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
@@ -411,11 +411,17 @@ namespace AanwezigheidDL_SQL
                 cmd.CommandText = SQL;
                 cmd.Parameters.AddWithValue("@speler_id", spelerID);
                 IDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                //while (reader.Read())
+                //{
+                //    percentage = (double)reader["aanwezigheidPercentage"];
+                //}
+                //return percentage;
+                if (reader.Read())
                 {
-                    percentage = (double)reader["aanwezigheidPercentage"];
+                    object value = reader["aanwezigheidPercentage"];
+                    return value == DBNull.Value ? 0 : Convert.ToDouble(value);
                 }
-                return percentage;
+                return 0;
             }
             catch (Exception ex)
             {

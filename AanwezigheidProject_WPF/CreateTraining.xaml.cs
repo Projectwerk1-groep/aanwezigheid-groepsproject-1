@@ -28,6 +28,7 @@ namespace AanwezigheidProject_WPF
 
         public ObservableCollection<Team> Teams = [];
         public ObservableCollection<Speler> Spelers = [];
+        public ObservableCollection<Speler> SpelersMetPercentages = [];
 
         public CreateTraining(AanwezigheidManager manager)
         {
@@ -48,9 +49,6 @@ namespace AanwezigheidProject_WPF
             Teams.Clear();
             List<Team> teams = _manager.GeefTeamsPerCoach(coach.CoachID).ToList();
             teams.ForEach(t => {Teams.Add(t);});
-            foreach (Team team in teams) { 
-                Teams.Add(team);
-            }
 
             TeamComboBox.ItemsSource = teams;
 
@@ -59,6 +57,16 @@ namespace AanwezigheidProject_WPF
 
             //Toon de namen van de teams
             TeamComboBox.DisplayMemberPath = "TeamNaam";
+
+            if (TeamComboBox.SelectedItem != null)
+            {
+                Team? selectedTeam = TeamComboBox.SelectedItem as Team;
+
+                RefreshSpelerList(selectedTeam);
+
+                OverzichtSpelers.ItemsSource = Spelers;
+                DetailsSpelers.ItemsSource = SpelersMetPercentages;
+            }
         }
 
         private void TeamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -70,17 +78,20 @@ namespace AanwezigheidProject_WPF
 
                 TeamComboBox.SelectedItem = selectedTeam;
 
-                Team_Naam_TextBlock.Text = selectedTeam.ToString();
+                Details_TeamNaam_TBl.Text = selectedTeam.TeamNaam.ToString();
 
-                Historiek_Team_Naam_TextBlock.Text = selectedTeam.ToString();
+                Historiek_TeamNaam_TBl.Text = selectedTeam.TeamNaam.ToString();
 
-                Spelers.Clear();
-                List<Speler> spelers = _manager.GeefSpelersVanTeam(selectedTeam.TeamID);
-                spelers.ForEach(s => { Spelers.Add(s);});
+                RefreshSpelerList(selectedTeam);
             }
         }
 
-        private void OverzichtSpelers_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OverzichtSpelers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void DetailsSpelers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
@@ -109,6 +120,19 @@ namespace AanwezigheidProject_WPF
         {
             
         }
+        
+        public void RefreshSpelerList(Team team)
+        {
+            Spelers.Clear();
+            List<Speler> spelers = _manager.GeefSpelersVanTeam(team.TeamID);
+            spelers.ForEach(s => { Spelers.Add(s); });
+            AantalSpelersTBl.Text = Spelers.Count.ToString();
+
+            SpelersMetPercentages.Clear();
+            spelers.ForEach(s => { SpelersMetPercentages.Add(
+                new Speler(s.Naam, s.RugNummer, s.Team, _manager.GeefPercentageAanwezigheid(s.SpelerID))); });
+            Details_TeamAantalSpelers_TBl.Text = SpelersMetPercentages.Count.ToString();
+        }
 
         private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -119,7 +143,6 @@ namespace AanwezigheidProject_WPF
             textBox.Visibility = Visibility.Visible;
             textBox.Focus();
         }
-
 
         private void ShowSelectedDate_Click(object sender, RoutedEventArgs e)
         {

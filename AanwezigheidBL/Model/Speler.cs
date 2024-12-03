@@ -12,11 +12,9 @@ namespace AanwezigheidBL.Model
     {
         //We zullen hier een constructor toevoegen met alle eigenschappen van deze klasse, omdat we het nodig hebben om het aanmaken van objecten in de data-laag te vergemakkelijken.
         public Speler(int spelerID, string naam, int rugNummer, Team team)
+            :this(naam, rugNummer, team)
         {
             SpelerID = spelerID;
-            Naam = naam;
-            RugNummer = rugNummer;
-            Team = team;
         }
         public Speler(string naam, int rugNummer, Team team)
         {
@@ -24,6 +22,13 @@ namespace AanwezigheidBL.Model
             RugNummer = rugNummer;
             Team = team;
         }
+
+        public Speler(string naam, int rugNummer, Team team, double percentage)
+            : this(naam, rugNummer, team)
+        {
+            Percentage = percentage;
+        }
+
         public int SpelerID;
         private string _naam;
         public string Naam
@@ -49,5 +54,7 @@ namespace AanwezigheidBL.Model
             }
         }
         public Team Team { get; set; }
+
+        public double Percentage { get; set; }
     }
 }
