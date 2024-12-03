@@ -21,7 +21,7 @@ namespace AanwezigheidBL.Managers
         #region Speler
 
         //VoegSpelerToe: Deze methode voegt een speler toe aan de database.
-        public void VoegSpelerToe(Speler speler)
+        public void VoegSpelerToe(Speler speler) // getest door Intesar
         {
             try
             {
@@ -34,7 +34,7 @@ namespace AanwezigheidBL.Managers
             }
         }
         //WijzigSpeler: Deze methode neemt een Speler-object vóór de wijziging en een nieuw Speler-object (na de wijziging) om de gegevens van de speler aan te passen, met uitzondering van het ID. En kan worden gebruikt op de overzicht-pagina in de UI.
-        public void WijzigSpeler(Speler oldSpeler, Speler newSpeler)
+        public void WijzigSpeler(Speler oldSpeler, Speler newSpeler) // getest door Gaith
         {
             try
             {
@@ -46,7 +46,7 @@ namespace AanwezigheidBL.Managers
             }
         }
         //VerwijderSpeler: Deze methode verwijdert de speler uit de database. Het kan worden gebruikt op beide pagina's in de UI.
-        public void VerwijderSpeler(Speler speler)
+        public void VerwijderSpeler(Speler speler) // getest door Gaith
         {
             try
             {
@@ -59,7 +59,7 @@ namespace AanwezigheidBL.Managers
             }
         }
         //GeefSpelersVanTeam: Deze methode retourneert een lijst met spelers van een specifiek team.
-        public List<Speler> GeefSpelersVanTeam(int teamID)
+        public List<Speler> GeefSpelersVanTeam(int teamID) // getest door Gaith
         {
             try
             {
@@ -76,7 +76,7 @@ namespace AanwezigheidBL.Managers
         #region Training
 
         //VoegTrainingToe: Deze methode voegt een training toe aan de database nadat eerst wordt gecontroleerd of deze al bestaat. Als er al een training met dezelfde datum, thema en details bestaat, voorkomt deze methode dat deze aan de database wordt toegevoegd.
-        public void VoegTrainingToe(Training training)
+        public void VoegTrainingToe(Training training) // getest door Gaith
         {
             try
             {
@@ -91,7 +91,7 @@ namespace AanwezigheidBL.Managers
             }
         }
         //WijzigTraining: Deze methode neemt een Training-object vóór de wijziging en een bijgewerkt Training-object (na de wijziging) en vervangt het oude object door het nieuwe in de database.
-        public void WijzigTraining(Training oldTraining, Training newTraining)
+        public void WijzigTraining(Training oldTraining, Training newTraining) // getest door Intesar
         {
             try
             {
@@ -103,7 +103,7 @@ namespace AanwezigheidBL.Managers
             }
         }
         //GeefTrainingenVanTeam: Deze methode retourneert alle eerdere trainingen van een specifiek team en kan worden gebruikt op de details-pagina.
-        public List<Training> GeefTrainingenVanTeam(int teamID)
+        public List<Training> GeefTrainingenVanTeam(int teamID) // getest door Intesar
         {
             try
             {
@@ -115,7 +115,7 @@ namespace AanwezigheidBL.Managers
             }
         }
         //LeesTraining: Deze methode retourneert één specifieke training op basis van het ID.
-        public Training GeefTraining(int trainingId)
+        public Training GeefTraining(int trainingId) // getest door Gaith
         {
             try
             {
@@ -131,7 +131,7 @@ namespace AanwezigheidBL.Managers
 
         #region Aanwezigheid
         //VoegAanwezigheidToe: Deze methode voegt de aanwezigheid toe aan de database.
-        public void VoegAanwezigheidToe(Aanwezigheid aanwezigheid)
+        public void VoegAanwezigheidToe(Aanwezigheid aanwezigheid) // getest door Intesar
         {
             try
             {
@@ -144,7 +144,7 @@ namespace AanwezigheidBL.Managers
             }
         }
         //ExportAanwezigheidNaarTXT:Deze methode exporteert de aanwezigheidsgegevens van elke speler, gebaseerd op het team en de training, naar een tekstbestand
-        public void ExportAanwezigheidNaarTXT(Training training, Team team, string filePath)
+        public void ExportAanwezigheidNaarTXT(Training training, Team team, string filePath) // getest door Intesar
         {
             try
             {
@@ -156,7 +156,7 @@ namespace AanwezigheidBL.Managers
             }
         }
         //GeefPercentageAanwezigheid: Deze methode berekent het aanwezigheidspercentage van een speler bij de trainingendoor het aantal trainingen dat hij heeft bijgewoond te delen door het totale aantal trainingen dat hij had kunnen bijwonen. Deze methode kan worden gebruikt op de details-pagina in de UI.
-        public double GeefPercentageAanwezigheid(int spelerID)
+        public double GeefPercentageAanwezigheid(int spelerID) // getest door Gaith
         {
             try
             {
@@ -208,7 +208,7 @@ namespace AanwezigheidBL.Managers
 
         }
         //GeefTeams: Deze methode controleert of dit team al in de database bestaat voordat we details eraan toevoegen.
-        public List<Team> GeefTeams()
+        public List<Team> GeefTeams() // getest door Intesar
         {
             try
             {
@@ -220,7 +220,7 @@ namespace AanwezigheidBL.Managers
             }
         }
 
-        public List<Team> GeefTeamsPerCoach(int coachId)
+        public List<Team> GeefTeamsPerCoach(int coachId) // getest door Intesar
         {
             try
             {
@@ -232,7 +232,7 @@ namespace AanwezigheidBL.Managers
             }
         }
 
-        public List<Coach> GeefCoaches()
+        public List<Coach> GeefCoaches() // getest door Intesar
         {
             try
             {
@@ -245,7 +245,7 @@ namespace AanwezigheidBL.Managers
         }
 
         //VoegLetselToe:Deze methode voegt een letsel toe aan een speler in de database.
-        public void VoegLetselToe(Letsel letsel)
+        public void VoegLetselToe(Letsel letsel) // getest door Gaith
         {
             try
             {
@@ -260,8 +260,7 @@ namespace AanwezigheidBL.Managers
             }
         }
 
-        #region Nog niet gebruiken methodes
-        public void VoegCoachToe(Coach coach)
+        public void VoegCoachToe(Coach coach) // getest door Intesar
         {
             try
             {
@@ -273,7 +272,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(VoegCoachToe), ex);
             }
         }
-        public void VoegTeamToe(Team team)
+        public void VoegTeamToe(Team team) // getest door Gaith
         {
             try
             {
@@ -287,7 +286,6 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(VoegTeamToe), ex);
             }
         }
-        #endregion
 
     }
 }

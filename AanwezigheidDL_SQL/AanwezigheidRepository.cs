@@ -19,7 +19,7 @@ namespace AanwezigheidDL_SQL
 
         #region Speler
         //LeesSpelersVanTeam: Deze methode leest alle spelers van een specifiek team uit de database. Deze methode kan worden gebruikt op de details-pagina in de UI en ook op de overzicht-pagina.
-        public List<Speler> LeesSpelersVanTeam(int teamID)
+        public List<Speler> LeesSpelersVanTeam(int teamID) // getest door Gaith
         {
             string SQL = "SELECT * FROM Speler WHERE team_id = @team_id;";
             List<Speler> spelers = [];
@@ -52,7 +52,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //HeeftSpeler: Deze methode controleert of deze speler al in de database bestaat voordat we deze aan de database toevoegen.
-        public bool HeeftSpeler(Speler speler)
+        public bool HeeftSpeler(Speler speler) // getest door Intesar
         {
             string sql = "SELECT COUNT(*) FROM Speler WHERE naam = @naam  AND rugNummer = @rugNummer AND team_id = @team_id;";
             using SqlConnection conn = new(_connectionString);
@@ -74,7 +74,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //SchrijfSpeler: Deze methode voegt een speler toe aan de database en kan worden gebruikt op beide pagina's in de UI.
-        public void SchrijfSpeler(Speler speler)
+        public void SchrijfSpeler(Speler speler) // getest door Intesar
         {
             string sql = "INSERT INTO Speler(naam ,rugNummer,team_id) VALUES (@naam,@rugNummer,@team_id)";
             using SqlConnection conn = new(_connectionString);
@@ -95,7 +95,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //SchrijfWijzigingSpeler: Deze methode neemt een Speler-object vóór de wijziging en een nieuw Speler-object (na de wijziging) om de gegevens van de speler aan te passen, met uitzondering van het ID. En kan worden gebruikt op de overzicht-pagina in de UI.
-        public void SchrijfWijzigingSpeler(Speler oldSpeler, Speler newSpeler)
+        public void SchrijfWijzigingSpeler(Speler oldSpeler, Speler newSpeler) // getest door Gaith
         {
             string sql = "UPDATE Speler SET naam = @newNaam, rugNummer = @newRugNummer, team_id = @newTeamID WHERE id = @id";
             using SqlConnection conn = new(_connectionString);
@@ -117,7 +117,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //VerwijderSpelerVanDB: Deze methode verwijdert de speler uit de database. Het kan worden gebruikt op beide pagina's in de UI.
-        public void VerwijderSpelerVanDB(Speler speler)
+        public void VerwijderSpelerVanDB(Speler speler) // getest door Gaith
         {
             string sql = "DELETE FROM Speler WHERE id = @id;";
             using SqlConnection conn = new(_connectionString);
@@ -139,7 +139,7 @@ namespace AanwezigheidDL_SQL
 
         #region Training
         //HeeftTraining: Deze methode controleert of deze training al in de database bestaat voordat we deze aan de database toevoegen.
-        public bool HeeftTraining(Training training)
+        public bool HeeftTraining(Training training) // getest door Gaith
         {
             string sql = "SELECT COUNT(*) FROM Training WHERE datum=@datum AND thema=@thema AND team_id=@team_id";
             using SqlConnection conn = new(_connectionString);
@@ -160,7 +160,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //SchrijfTraining: Deze methode voegt een training toe aan de database en kan worden gebruikt op beide pagina's in de UI.
-        public void SchrijfTraining(Training training)
+        public void SchrijfTraining(Training training) // getest door Gaith
         {
             string sql = "INSERT INTO Training(datum, thema, team_id) VALUES (@datum, @thema, @team_id)";
             using SqlConnection conn = new(_connectionString);
@@ -204,7 +204,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //LeesTrainingenVanTeam: Deze methode retourneert alle eerdere trainingen van een specifiek team en kan worden gebruikt op de details-pagina.
-        public List<Training> LeesTrainingenVanTeam(int teamId)
+        public List<Training> LeesTrainingenVanTeam(int teamId) // getest door Intesar
         {
             string SQL = "SELECT * FROM Training WHERE team_id = @team_id";
             List<Training> trainingen = [];
@@ -247,6 +247,9 @@ namespace AanwezigheidDL_SQL
             {
                 conn.Open();
                 cmd.CommandText = SQL;
+                cmd.Parameters.AddWithValue("@datum", trainingZonderID.Datum);
+                cmd.Parameters.AddWithValue("@thema", trainingZonderID.Thema);
+                cmd.Parameters.AddWithValue("@teamId", trainingZonderID.Team.TeamID);
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
@@ -269,7 +272,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //LeesTraining: Deze methode retourneert één specifieke training op basis van het ID.
-        public Training LeesTraining(int trainingId)
+        public Training LeesTraining(int trainingId) // getest door Gaith
         {
             Training training = null;
             string SQL = "SELECT * FROM Training WHERE id = @training_id";
@@ -307,7 +310,7 @@ namespace AanwezigheidDL_SQL
         #region Aanwezigheid
 
         //HeeftAanwezigheid: Deze methode controleert of deze aanwezigheid al in de database bestaat voordat we deze aan de database toevoegen.
-        public bool HeeftAanwezigheid(Aanwezigheid aanwezigheid)
+        public bool HeeftAanwezigheid(Aanwezigheid aanwezigheid) // getest door Intesar
         {
             string sql = "SELECT COUNT(*) FROM Aanwezigheid WHERE speler_id = @speler_id AND training_id = @training_id;";
             using SqlConnection conn = new(_connectionString);
@@ -328,7 +331,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //SchrijfAanwezigheid: Deze methode voegt de aanwezigheid toe aan de database.
-        public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid)
+        public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid) // getest door Intesar
         {
             string sql = "INSERT INTO Aanwezigheid(speler_id ,training_id,isAanwezig,heeftAfwezigheidGemeld,redenAfwezigheid) VALUES (@speler_id ,@training_id,@isAanwezig,@heeftAfwezigheidGemeld,@redenAfwezigheid)";
             using SqlConnection conn = new(_connectionString);
@@ -350,7 +353,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //LeesEnSchrijfAanwezigheidPerTrainingInTXT: Deze methode exporteert de aanwezigheidsgegevens van elke speler, gebaseerd op het team en de training, naar een tekstbestand
-        public void LeesEnSchrijfAanwezigheidPerTrainingInTXT(Training training, Team team, string filePath)
+        public void LeesEnSchrijfAanwezigheidPerTrainingInTXT(Training training, Team team, string filePath) // getest door Intesar
         {
             string SQL = @"SELECT 
                                 Speler.naam AS 'Speler Naam',
@@ -399,7 +402,7 @@ namespace AanwezigheidDL_SQL
             }
         }
         //LeesPercentageAanwezigheid: Deze methode berekent het aanwezigheidspercentage van een speler bij de trainingendoor het aantal trainingen dat hij heeft bijgewoond te delen door het totale aantal trainingen dat hij had kunnen bijwonen. Deze methode kan worden gebruikt op de details-pagina in de UI.
-        public double LeesPercentageAanwezigheid(int spelerID)
+        public double LeesPercentageAanwezigheid(int spelerID) // getest door Gaith
         {
             string SQL = "SELECT CAST(SUM(CASE WHEN isAanwezig = 1 THEN 1 ELSE 0 END) AS FLOAT) / NULLIF(COUNT(*), 0) * 100 AS aanwezigheidPercentage FROM Aanwezigheid WHERE speler_id = @speler_id;";
             //double percentage = 0;
@@ -499,7 +502,7 @@ namespace AanwezigheidDL_SQL
         }
 
         //HeeftTeam: Deze methode controleert of dit team al in de database bestaat voordat we details eraan toevoegen.
-        public bool HeeftTeam(Team team)
+        public bool HeeftTeam(Team team) // getest door Gaith
         {
             string sql = "SELECT COUNT(*) FROM Team WHERE naam=@naam AND coach_id=@coach_id";
             using SqlConnection conn = new(_connectionString);
@@ -570,8 +573,7 @@ namespace AanwezigheidDL_SQL
         #endregion
 
 
-        #region Nog niet gebruiken
-        public void SchrijfTeam(Team team)
+        public void SchrijfTeam(Team team) // getest door Gaith
         {
             string sql = "INSERT INTO Team(naam, coach_id) VALUES (@naam, @coach_id)";
             using SqlConnection conn = new(_connectionString);
@@ -589,7 +591,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(SchrijfTeam), ex);
             }
         }
-        public List<Coach> LeesCoaches()
+        public List<Coach> LeesCoaches() // getest door Intesar
         {
             string SQL = "SELECT * FROM Coach";
             List<Coach> Coaches = [];
@@ -613,7 +615,7 @@ namespace AanwezigheidDL_SQL
         }
 
 
-        public bool HeeftCoach(Coach coach)
+        public bool HeeftCoach(Coach coach) // getest door Intesar
         {
             string sql = "SELECT COUNT(*) FROM Coach WHERE naam = @naam;";
             using SqlConnection conn = new(_connectionString);
@@ -633,7 +635,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(HeeftCoach), ex);
             }
         }
-        public void SchrijfCoach(Coach coach)
+        public void SchrijfCoach(Coach coach) // getest door Intesar
         {
             string sql = "INSERT INTO Coach(naam) VALUES (@naam)";
             using SqlConnection conn = new(_connectionString);
@@ -781,6 +783,5 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesAanwezigheden), ex);
             }
         }
-        #endregion
     }
 }

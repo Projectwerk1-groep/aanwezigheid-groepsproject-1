@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AanwezigheidBL\AanwezigheidBL.csproj" />
+    <ProjectReference Include="..\AanwezigheidDL_SQL\AanwezigheidDL_SQL.csproj" />
+  </ItemGroup>
+
 </Project>
