@@ -54,7 +54,7 @@ namespace AanwezigheidDL_SQL
         //HeeftSpeler: Deze methode controleert of deze speler al in de database bestaat voordat we deze aan de database toevoegen.
         public bool HeeftSpeler(Speler speler) // getest door Intesar
         {
-            string sql = "SELECT COUNT(*) FROM Speler WHERE naam = @naam  AND rugNummer = @rugNummer AND team_id = @team_id;";
+            string sql = "SELECT COUNT(*) FROM Speler WHERE (naam = @naam AND team_id = @team_id) OR (rugNummer = @rugNummer AND team_id = @team_id);";
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
@@ -119,14 +119,18 @@ namespace AanwezigheidDL_SQL
         //VerwijderSpelerVanDB: Deze methode verwijdert de speler uit de database. Het kan worden gebruikt op beide pagina's in de UI.
         public void VerwijderSpelerVanDB(Speler speler) // getest door Gaith
         {
-            string sql = "DELETE FROM Speler WHERE id = @id;";
+            string sql = "DELETE FROM Speler WHERE naam = @naam AND rugNummer = @rugNummer AND team_id = @team_id;";
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
             {
                 conn.Open();
                 cmd.CommandText = sql;
-                cmd.Parameters.AddWithValue("@id", speler.SpelerID);
+                //cmd.Parameters.AddWithValue("@id", speler.SpelerID);
+                cmd.Parameters.AddWithValue("@naam", speler.Naam);
+                cmd.Parameters.AddWithValue("@rugNummer", speler.RugNummer);
+                cmd.Parameters.AddWithValue("@team_id", speler.Team.TeamID);
+
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)

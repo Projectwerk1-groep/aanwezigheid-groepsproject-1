@@ -26,7 +26,8 @@ namespace AanwezigheidBL.Managers
             try
             {
                 if (!_aanwezigheidRepository.HeeftSpeler(speler))
-                    _aanwezigheidRepository.SchrijfSpeler(speler);
+                { _aanwezigheidRepository.SchrijfSpeler(speler); }
+                else { throw new Exception(); }
             }
             catch (Exception ex)
             {
@@ -38,6 +39,9 @@ namespace AanwezigheidBL.Managers
         {
             try
             {
+                if (_aanwezigheidRepository.HeeftSpeler(newSpeler))
+                    throw new ArgumentException("Er bestaat al een speler met dezelfde naam of nummer in deze team.");
+
                 _aanwezigheidRepository.SchrijfWijzigingSpeler(oldSpeler, newSpeler);
             }
             catch (Exception ex)

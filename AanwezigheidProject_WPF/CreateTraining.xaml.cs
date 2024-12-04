@@ -1,9 +1,11 @@
-﻿using AanwezigheidBL.Managers;
+﻿using AanwezigheidBL.Exceptions;
+using AanwezigheidBL.Managers;
 using AanwezigheidBL.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,14 +27,15 @@ namespace AanwezigheidProject_WPF
     public partial class CreateTraining : Window
     {
         public AanwezigheidManager _manager;
-
+        public Team Team;
+        public Speler Speler;
         public ObservableCollection<Team> Teams = [];
         public ObservableCollection<Speler> Spelers = [];
         public ObservableCollection<Speler> SpelersMetPercentages = [];
 
         public CreateTraining(AanwezigheidManager manager)
         {
-            _manager = manager;            
+            _manager = manager;
             InitializeComponent();
 
             WindowState = WindowState.Maximized;
@@ -48,7 +51,7 @@ namespace AanwezigheidProject_WPF
             //Teams PER trainer inlezen
             Teams.Clear();
             List<Team> teams = _manager.GeefTeamsPerCoach(coach.CoachID).ToList();
-            teams.ForEach(t => {Teams.Add(t);});
+            teams.ForEach(t => { Teams.Add(t); });
 
             TeamComboBox.ItemsSource = teams;
 
@@ -58,11 +61,11 @@ namespace AanwezigheidProject_WPF
             //Toon de namen van de teams
             TeamComboBox.DisplayMemberPath = "TeamNaam";
 
-            if (TeamComboBox.SelectedItem != null)
+            if (TeamComboBox.SelectedItem != null && TeamComboBox.SelectedItem is Team selectedTeam)
             {
-                Team? selectedTeam = TeamComboBox.SelectedItem as Team;
+                Team = selectedTeam;
 
-                RefreshSpelerList(selectedTeam);
+                RefreshSpelerList(Team);
 
                 OverzichtSpelers.ItemsSource = Spelers;
                 DetailsSpelers.ItemsSource = SpelersMetPercentages;
@@ -72,43 +75,92 @@ namespace AanwezigheidProject_WPF
         private void TeamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Stel het geselecteerde item in als de nieuwe standaardwaarde
-            if (TeamComboBox.SelectedItem != null)
+            if (TeamComboBox.SelectedItem != null && TeamComboBox.SelectedItem is Team selectedTeam)
             {
-                Team? selectedTeam = TeamComboBox.SelectedItem as Team;
+                Team = selectedTeam;
 
-                TeamComboBox.SelectedItem = selectedTeam;
+                TeamComboBox.SelectedItem = Team;
 
-                Details_TeamNaam_TBl.Text = selectedTeam.TeamNaam.ToString();
+                Details_TeamNaam_TBl.Text = Team.TeamNaam.ToString();
 
-                Historiek_TeamNaam_TBl.Text = selectedTeam.TeamNaam.ToString();
+                Historiek_TeamNaam_TBl.Text = Team.TeamNaam.ToString();
 
-                RefreshSpelerList(selectedTeam);
+                RefreshSpelerList(Team);
             }
         }
 
         private void OverzichtSpelers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (OverzichtSpelers.SelectedItem != null && OverzichtSpelers.SelectedItem is Speler selectedSpeler)
+            {
+                Speler = selectedSpeler;
+            }
         }
 
         private void DetailsSpelers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (DetailsSpelers.SelectedItem != null && DetailsSpelers.SelectedItem is Speler selectedSpeler)
+            {
+                Speler = selectedSpeler;
+            }
         }
 
-        private void VoeSpelerToe_Click(object sender, RoutedEventArgs e)
+        private void VoegSpelerToe_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                AddSpelerInputDialog dialog = new();
+                if (dialog.ShowDialog() == true) // Open de dialog en controleer op OK
+                {
+                    string naam = dialog.Naam;
+                    int rugnummer = dialog.Rugnummer;
 
+                    Speler newSpeler = new(naam, rugnummer, Team);
+
+                    _manager.VoegSpelerToe(newSpeler);
+
+                    RefreshSpelerList(Team);
+
+                    // Voeg hier de logica toe om de speler aan de lijst toe te voegen
+                    MessageBox.Show($"Nieuwe speler: {naam}, Nr.{rugnummer} is toegevoegd.");
+                }
+                else
+                {
+                    MessageBox.Show("Actie geannuleerd.");
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Er bestaat al een speler met dezelfde naam of nummer in deze team.");
+            }
         }
 
         private void VerwijderSpeler_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (DetailsSpelers.SelectedItem != null)
+                {
+                    _manager.VerwijderSpeler(Speler);
 
+                    RefreshSpelerList(Team);
+
+                    MessageBox.Show("Deze speler is verwijderd.");
+                }
+                else
+                {
+                    MessageBox.Show("Selecteer eerst een speler om te verwijderen.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(_manager.VerwijderSpeler), ex);
+            }
         }
 
-        private void TrainingOpslaan_Click(object sender, RoutedEventArgs e) 
-        { 
-        
+        private void TrainingOpslaan_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void ToonTraining_Click(object sender, RoutedEventArgs e)
@@ -118,19 +170,23 @@ namespace AanwezigheidProject_WPF
 
         private void ExporteerTraining_Click(object sender, RoutedEventArgs e)
         {
-            
+
         }
-        
+
         public void RefreshSpelerList(Team team)
         {
             Spelers.Clear();
-            List<Speler> spelers = _manager.GeefSpelersVanTeam(team.TeamID);
-            spelers.ForEach(s => { Spelers.Add(s); });
-            AantalSpelersTBl.Text = Spelers.Count.ToString();
-
             SpelersMetPercentages.Clear();
-            spelers.ForEach(s => { SpelersMetPercentages.Add(
-                new Speler(s.Naam, s.RugNummer, s.Team, _manager.GeefPercentageAanwezigheid(s.SpelerID))); });
+
+            List<Speler> spelers = _manager.GeefSpelersVanTeam(team.TeamID);
+            spelers.ForEach(s =>
+            {
+                Spelers.Add(s);
+                SpelersMetPercentages.Add(
+                    new Speler(s.Naam, s.RugNummer, s.Team, _manager.GeefPercentageAanwezigheid(s.SpelerID)));
+            });
+
+            AantalSpelersTBl.Text = Spelers.Count.ToString();
             Details_TeamAantalSpelers_TBl.Text = SpelersMetPercentages.Count.ToString();
         }
 
