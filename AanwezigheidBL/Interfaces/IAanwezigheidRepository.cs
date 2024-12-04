@@ -23,7 +23,8 @@ namespace AanwezigheidBL.Interfaces
         List<Team> LeesTeams();
         List<Team> LeesTeamsPerCoach(int coachId);
         Training LeesTrainingOmAanwezighedenTeMaken(Training trainingZonderID); //Aanpassen
-        bool HeeftSpeler(Speler speler);
+        bool HeeftSpelerBijToevoeging(Speler speler);
+        bool HeeftSpelerBijWijziging(Speler speler);
         void SchrijfSpeler(Speler speler);
         bool HeeftAanwezigheid(Aanwezigheid aanwezigheid);
         void SchrijfAanwezigheid(Aanwezigheid aanwezigheid);

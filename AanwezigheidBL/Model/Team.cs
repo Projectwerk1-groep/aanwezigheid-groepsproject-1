@@ -24,7 +24,5 @@ namespace AanwezigheidBL.Model
         public int TeamID;
         public string TeamNaam { get; set; }
         public Coach Coach { get; set; }
-
-        public List<Speler> Spelers { get; set; }
     }
 }

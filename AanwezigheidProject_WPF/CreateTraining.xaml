@@ -279,12 +279,16 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
                                     <Button Grid.Column="0" Content="Speler Toevoegen" Background="SeaGreen" 
                                             Height="40" Padding="10" HorizontalAlignment="Left" Click="VoegSpelerToe_Click"
                                             Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
-                                    <Button Grid.Column="1" Content="Speler Verwijderen" Background="IndianRed" 
+                                    <Button Grid.Column="1" Content="Speler Wijzigen" Background="RoyalBlue" 
+                                            Height="40" Padding="10" HorizontalAlignment="Center" Click="WijzigSpeler_Click"
+                                            Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                    <Button Grid.Column="2" Content="Speler Verwijderen" Background="IndianRed" 
                                             Height="40" Padding="10" HorizontalAlignment="Right" Click="VerwijderSpeler_Click"
                                             Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
                                 </Grid>
@@ -335,8 +339,12 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Button Grid.Column="0" Content="Traininggegevens Tonen" Background="SeaGreen" Height="40" Padding="10" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
-                                    <Button Grid.Column="1" Content="Export naar Tekstbestand" Background="RoyalBlue" Height="40" Padding="10" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+                                    <Button Grid.Column="0" Content="Traininggegevens Tonen" Background="SeaGreen" 
+                                            Height="40" Padding="10" HorizontalAlignment="Left" 
+                                            Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
+                                    <Button Grid.Column="1" Content="Export naar Tekstbestand" Background="RoyalBlue" 
+                                            Height="40" Padding="10" HorizontalAlignment="Right" 
+                                            Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
                                 </Grid>
                             </StackPanel>
 

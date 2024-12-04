@@ -51,8 +51,9 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesSpelersVanTeam), ex);
             }
         }
-        //HeeftSpeler: Deze methode controleert of deze speler al in de database bestaat voordat we deze aan de database toevoegen.
-        public bool HeeftSpeler(Speler speler) // getest door Intesar
+        //HeeftSpeler: Deze 2 methodes controleren of deze speler al in de database bestaat voordat we deze aan de database toevoegen.
+        // Controle bij toevoeging van speler
+        public bool HeeftSpelerBijToevoeging(Speler speler) // getest door Intesar
         {
             string sql = "SELECT COUNT(*) FROM Speler WHERE (naam = @naam AND team_id = @team_id) OR (rugNummer = @rugNummer AND team_id = @team_id);";
             using SqlConnection conn = new(_connectionString);
@@ -70,9 +71,32 @@ namespace AanwezigheidDL_SQL
             }
             catch (Exception ex)
             {
-                throw new DomeinException(nameof(HeeftSpeler), ex);
+                throw new DomeinException(nameof(HeeftSpelerBijToevoeging), ex);
             }
         }
+        // Controle bij wijziging van speler
+        public bool HeeftSpelerBijWijziging(Speler speler) // getest door Intesar
+        {
+            string sql = "SELECT COUNT(*) FROM Speler WHERE naam = @naam AND rugNummer = @rugNummer AND team_id = @team_id;";
+            using SqlConnection conn = new(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
+            {
+                conn.Open();
+                cmd.CommandText = sql;
+                cmd.Parameters.AddWithValue("@naam", speler.Naam);
+                cmd.Parameters.AddWithValue("@rugNummer", speler.RugNummer);
+                cmd.Parameters.AddWithValue("@team_id", speler.Team.TeamID);
+
+                int n = (int)cmd.ExecuteScalar();
+                if (n > 0) return true; else return false;
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(HeeftSpelerBijWijziging), ex);
+            }
+        }
+
         //SchrijfSpeler: Deze methode voegt een speler toe aan de database en kan worden gebruikt op beide pagina's in de UI.
         public void SchrijfSpeler(Speler speler) // getest door Intesar
         {
@@ -97,7 +121,7 @@ namespace AanwezigheidDL_SQL
         //SchrijfWijzigingSpeler: Deze methode neemt een Speler-object vóór de wijziging en een nieuw Speler-object (na de wijziging) om de gegevens van de speler aan te passen, met uitzondering van het ID. En kan worden gebruikt op de overzicht-pagina in de UI.
         public void SchrijfWijzigingSpeler(Speler oldSpeler, Speler newSpeler) // getest door Gaith
         {
-            string sql = "UPDATE Speler SET naam = @newNaam, rugNummer = @newRugNummer, team_id = @newTeamID WHERE id = @id";
+            string sql = "UPDATE Speler SET naam = @newNaam, rugNummer = @newRugNummer, team_id = @newTeamID WHERE id = @id;";
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
@@ -119,17 +143,17 @@ namespace AanwezigheidDL_SQL
         //VerwijderSpelerVanDB: Deze methode verwijdert de speler uit de database. Het kan worden gebruikt op beide pagina's in de UI.
         public void VerwijderSpelerVanDB(Speler speler) // getest door Gaith
         {
-            string sql = "DELETE FROM Speler WHERE naam = @naam AND rugNummer = @rugNummer AND team_id = @team_id;";
+            string sql = "DELETE FROM Speler WHERE id = @id;";
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
             {
                 conn.Open();
                 cmd.CommandText = sql;
-                //cmd.Parameters.AddWithValue("@id", speler.SpelerID);
-                cmd.Parameters.AddWithValue("@naam", speler.Naam);
-                cmd.Parameters.AddWithValue("@rugNummer", speler.RugNummer);
-                cmd.Parameters.AddWithValue("@team_id", speler.Team.TeamID);
+                cmd.Parameters.AddWithValue("@id", speler.SpelerID);
+                //cmd.Parameters.AddWithValue("@naam", speler.Naam);
+                //cmd.Parameters.AddWithValue("@rugNummer", speler.RugNummer);
+                //cmd.Parameters.AddWithValue("@team_id", speler.Team.TeamID);
 
                 cmd.ExecuteNonQuery();
             }

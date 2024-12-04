@@ -23,8 +23,8 @@ namespace AanwezigheidBL.Model
             Team = team;
         }
 
-        public Speler(string naam, int rugNummer, Team team, double percentage)
-            : this(naam, rugNummer, team)
+        public Speler(int spelerID, string naam, int rugNummer, Team team, double percentage)
+            : this(spelerID, naam, rugNummer, team)
         {
             Percentage = percentage;
         }

@@ -109,11 +109,11 @@ namespace AanwezigheidProject_WPF
         {
             try
             {
-                AddSpelerInputDialog dialog = new();
-                if (dialog.ShowDialog() == true) // Open de dialog en controleer op OK
+                AddSpelerInputDialog addDialog = new();
+                if (addDialog.ShowDialog() == true) // Open de dialog en controleer op OK
                 {
-                    string naam = dialog.Naam;
-                    int rugnummer = dialog.Rugnummer;
+                    string naam = addDialog.Naam;
+                    int rugnummer = addDialog.Rugnummer;
 
                     Speler newSpeler = new(naam, rugnummer, Team);
 
@@ -124,14 +124,42 @@ namespace AanwezigheidProject_WPF
                     // Voeg hier de logica toe om de speler aan de lijst toe te voegen
                     MessageBox.Show($"Nieuwe speler: {naam}, Nr.{rugnummer} is toegevoegd.");
                 }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("In deze team bestaat er al een speler met dezelfde naam of nummer.");
+            }
+        }
+
+        private void WijzigSpeler_Click(object sender, RoutedEventArgs e)
+        {
+            Speler oldSpeler = Speler;
+            try
+            {
+                if (DetailsSpelers.SelectedItem != null)
+                {
+                    WijzigSpelerInputDialog WijzigDialog = new(oldSpeler);
+                    if (WijzigDialog.ShowDialog() == true) // Open de dialog en controleer op OK
+                    {
+                        string naam = WijzigDialog.Naam;
+                        int rugnummer = WijzigDialog.Rugnummer;
+
+                        Speler newSpeler = new(naam, rugnummer, Team);
+                        _manager.WijzigSpeler(oldSpeler, newSpeler);
+
+                        RefreshSpelerList(Team);
+
+                        MessageBox.Show($"Deze speler is gewijzigd naar {naam}, Nr.{rugnummer}.");
+                    }
+                }
                 else
                 {
-                    MessageBox.Show("Actie geannuleerd.");
+                    MessageBox.Show("Selecteer eerst een speler om te wijzigen.");
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show("Er bestaat al een speler met dezelfde naam of nummer in deze team.");
+                MessageBox.Show("In deze team bestaat er al een speler met dezelfde naam of nummer.");
             }
         }
 
@@ -183,7 +211,7 @@ namespace AanwezigheidProject_WPF
             {
                 Spelers.Add(s);
                 SpelersMetPercentages.Add(
-                    new Speler(s.Naam, s.RugNummer, s.Team, _manager.GeefPercentageAanwezigheid(s.SpelerID)));
+                    new Speler(s.SpelerID, s.Naam, s.RugNummer, s.Team, _manager.GeefPercentageAanwezigheid(s.SpelerID)));
             });
 
             AantalSpelersTBl.Text = Spelers.Count.ToString();
