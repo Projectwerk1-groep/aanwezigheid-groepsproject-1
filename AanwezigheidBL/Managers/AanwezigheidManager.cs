@@ -55,7 +55,10 @@ namespace AanwezigheidBL.Managers
         {
             try
             {
-                _aanwezigheidRepository.VerwijderSpelerVanDB(speler);
+                if (_aanwezigheidRepository.HeeftAanwezigheidOpSpeler(speler))
+                    _aanwezigheidRepository.VerwijderAanwezigheidVanDB(speler); // getest door Orlando
+
+                _aanwezigheidRepository.VerwijderSpelerVanDB(speler);               
             }
             catch (Exception ex)
             {
@@ -180,7 +183,7 @@ namespace AanwezigheidBL.Managers
                                               Nadat de training is toegevoegd, wordt deze opgehaald uit de database om het ID te verkrijgen dat door de database wordt gegenereerd.
                                               Met deze training, inclusief het verkregen ID, kunnen we de aanwezigheid voor elke speler afzonderlijk toevoegen, gebaseerd op de informatie die beschikbaar is in de regels van de ListBox "Overzicht van spelers".
                                               Daarom leest deze methode de inhoud van deze ListBox en zet deze over naar de database.*/
-        public void VoegTrainingMetAanwezigheidToe(Training training, List<(Speler speler, bool isAanwezig, bool heeftAfwezigheidGemeld, RedenVanAfwezigheid redenAfwezigheid, string letselType, DateTime letselDatum, string notities)> listOmAanwezighedenTeMaken)
+        public void VoegTrainingMetAanwezigheidToe(Training training, List<Aanwezigheid> listOmAanwezighedenTeMaken)
         {
             try
             {
@@ -188,22 +191,22 @@ namespace AanwezigheidBL.Managers
                 Training trainingMetID = _aanwezigheidRepository.LeesTrainingOmAanwezighedenTeMaken(training);
                 foreach (var lijn in listOmAanwezighedenTeMaken)
                 {
-                    string reden = "";
-                    switch (lijn.redenAfwezigheid)
-                    {
-                        case RedenVanAfwezigheid.Letsel: reden = "Letsel"; break;
-                        case RedenVanAfwezigheid.Ziekte: reden = "Ziekte"; break;
-                        case RedenVanAfwezigheid.Andere: reden = "Andere"; break;
-                    }
-                    Aanwezigheid aanwezigheid = new(lijn.speler, trainingMetID, lijn.isAanwezig, lijn.heeftAfwezigheidGemeld, reden);
+                    //string reden = "";
+                    //switch (lijn.RedenAfwezigheid)
+                    //{
+                    //    case "Letsel": reden = "Letsel"; break;
+                    //    case "Ziekte": reden = "Ziekte"; break;
+                    //    case "Andere": reden = "Andere"; break;
+                    //}
+                    Aanwezigheid aanwezigheid = new(lijn.Speler, trainingMetID, lijn.IsAanwezig, lijn.HeeftAfwezigheidGemeld, lijn.RedenAfwezigheid);
                     VoegAanwezigheidToe(aanwezigheid);
 
 
-                    if (lijn.redenAfwezigheid == RedenVanAfwezigheid.Letsel)
-                    {
-                        Letsel letsel = new(lijn.speler, lijn.letselType, lijn.letselDatum, lijn.notities);
-                        VoegLetselToe(letsel);
-                    }
+                    //if (lijn.redenAfwezigheid == RedenVanAfwezigheid.Letsel)
+                    //{
+                    //    Letsel letsel = new(lijn.speler, lijn.letselType, lijn.letselDatum, lijn.notities);
+                    //    VoegLetselToe(letsel);
+                    //}
                 }
             }
             catch (Exception ex)

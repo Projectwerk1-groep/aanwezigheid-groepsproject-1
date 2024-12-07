@@ -187,6 +187,8 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(HeeftTraining), ex);
             }
         }
+
+
         //SchrijfTraining: Deze methode voegt een training toe aan de database en kan worden gebruikt op beide pagina's in de UI.
         public void SchrijfTraining(Training training) // getest door Gaith
         {
@@ -281,7 +283,7 @@ namespace AanwezigheidDL_SQL
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Team> teams = LeesTeams();
-                Dictionary<int, Team> dicTeams = new Dictionary<int, Team>();
+                Dictionary<int, Team> dicTeams = [];
 
                 foreach (Team team in teams)
                 {
@@ -358,6 +360,27 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(HeeftAanwezigheid), ex);
             }
         }
+
+        public bool HeeftAanwezigheidOpSpeler(Speler speler) // getest door Orlando
+        {
+            string sql = "SELECT COUNT(*) FROM Aanwezigheid WHERE speler_id = @speler_id;";
+            using SqlConnection conn = new(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
+            {
+                conn.Open();
+                cmd.CommandText = sql;
+                cmd.Parameters.AddWithValue("@speler_id", speler.SpelerID);
+
+                int n = (int)cmd.ExecuteScalar();
+                if (n > 0) return true; else return false;
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(HeeftAanwezigheidOpSpeler), ex);
+            }
+        }
+
         //SchrijfAanwezigheid: Deze methode voegt de aanwezigheid toe aan de database.
         public void SchrijfAanwezigheid(Aanwezigheid aanwezigheid) // getest door Intesar
         {
@@ -457,6 +480,25 @@ namespace AanwezigheidDL_SQL
             catch (Exception ex)
             {
                 throw new DomeinException(nameof(LeesPercentageAanwezigheid), ex);
+            }
+        }
+
+        public void VerwijderAanwezigheidVanDB(Speler speler) // getest door Orlando
+        {
+            string sql = "DELETE FROM Aanwezigheid WHERE speler_id = @speler_id;";
+            using SqlConnection conn = new(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
+            {
+                conn.Open();
+                cmd.CommandText = sql;
+                cmd.Parameters.AddWithValue("@speler_id", speler.SpelerID);
+
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(VerwijderAanwezigheidVanDB), ex);
             }
         }
 
@@ -619,6 +661,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(SchrijfTeam), ex);
             }
         }
+
         public List<Coach> LeesCoaches() // getest door Intesar
         {
             string SQL = "SELECT * FROM Coach";
@@ -642,7 +685,6 @@ namespace AanwezigheidDL_SQL
             }
         }
 
-
         public bool HeeftCoach(Coach coach) // getest door Intesar
         {
             string sql = "SELECT COUNT(*) FROM Coach WHERE naam = @naam;";
@@ -663,6 +705,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(HeeftCoach), ex);
             }
         }
+        
         public void SchrijfCoach(Coach coach) // getest door Intesar
         {
             string sql = "INSERT INTO Coach(naam) VALUES (@naam)";
@@ -681,6 +724,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(SchrijfCoach), ex);
             }
         }
+        
         public List<Speler> LeesSpelers()
         {
             string SQL = "SELECT * FROM Speler";
@@ -712,6 +756,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesSpelers), ex);
             }
         }
+        
         public List<Letsel> LeesLetsels()
         {
             string SQL = "SELECT * FROM Letsel";
@@ -743,6 +788,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesLetsels), ex);
             }
         }
+        
         public List<Training> LeesTrainingen()
         {
             string SQL = "SELECT * FROM Training";
@@ -774,27 +820,29 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesTrainingen), ex);
             }
         }
-        public List<Aanwezigheid> LeesAanwezigheden()
+        
+        public List<Aanwezigheid> LeesAanwezighedenVanTraining(Training trainingMetAanwezigheden)
         {
-            string SQL = "SELECT * FROM Aanwezigheid";
-            List<Aanwezigheid> aanwezigheden = new();
+            string SQL = "SELECT * FROM Aanwezigheid WHERE training_id = @training_id";
+            List<Aanwezigheid> aanwezigheden = [];
             using SqlConnection conn = new(_connectionString);
             using SqlCommand cmd = conn.CreateCommand();
             try
             {
                 conn.Open();
                 cmd.CommandText = SQL;
+                cmd.Parameters.AddWithValue("training_id", trainingMetAanwezigheden);
                 IDataReader reader = cmd.ExecuteReader();
 
                 List<Speler> spelers = LeesSpelers();
-                Dictionary<int, Speler> dicSpelers = new Dictionary<int, Speler>();
+                Dictionary<int, Speler> dicSpelers = [];
                 foreach (Speler speler in spelers)
                 {
                     dicSpelers.Add(speler.SpelerID, speler);
                 }
 
                 List<Training> trainingen = LeesTrainingen();
-                Dictionary<int, Training> dicTrainingen = new Dictionary<int, Training>();
+                Dictionary<int, Training> dicTrainingen = [];
                 foreach (Training training in trainingen)
                 {
                     dicTrainingen.Add(training.TrainingID, training);
@@ -808,7 +856,7 @@ namespace AanwezigheidDL_SQL
             }
             catch (Exception ex)
             {
-                throw new DomeinException(nameof(LeesAanwezigheden), ex);
+                throw new DomeinException(nameof(LeesAanwezighedenVanTraining), ex);
             }
         }
     }

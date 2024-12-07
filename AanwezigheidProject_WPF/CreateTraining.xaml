@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Background="{DynamicResource MaterialDesignPaper}"
@@ -120,16 +121,17 @@
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!--<TextBlock Grid.Column="0" x:Name="TrainingTextBlock" Margin="0,10" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Training: " />-->
-                                    <Label Grid.Column="0" Content="Aantal spelers:" Margin="0,10" HorizontalAlignment="Left"
+                                    <TextBlock Grid.Column="0" x:Name="TrainingTextBlock" Margin="0,10" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Training: " />
+                                    <Label Grid.Column="1" Content="Aantal spelers:" Margin="10,10,0,10" HorizontalAlignment="Left"
                                            VerticalAlignment="Center" Target="{Binding ElementName=AantalSpelersTBl}" />
-                                    <TextBlock Grid.Column="1" x:Name="AantalSpelersTBl" Margin="5,10,10,10" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" x:Name="AantalSpelersTBl" Margin="0,10,10,10" VerticalAlignment="Center" />
 
                                     <!-- DatePicker voor datumselectie -->
-                                    <DatePicker Grid.Column="3" x:Name="MyDatePicker" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,10" Width="200">
+                                    <DatePicker Grid.Column="3" x:Name="MyDatePicker" VerticalAlignment="Center" Margin="10,10,0,10" Width="200" SelectedDate="{x:Static sys:DateTime.Now}">
                                         <DatePicker.CalendarStyle>
                                             <Style TargetType="Calendar" BasedOn="{StaticResource MaterialDesignCalendarPortrait}">
                                                 <Style.Resources>
@@ -140,7 +142,7 @@
                                         </DatePicker.CalendarStyle>
                                     </DatePicker>
 
-                                    <TextBox Grid.Column="4" Text="{Binding Remark, Mode=TwoWay}" VerticalAlignment="Top" Margin="10,10" materialDesign:HintAssist.Hint="Thema" FontSize="14" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="500" AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap" MaxLength="255"/>
+                                    <TextBox Grid.Column="4" x:Name="ThemaTextBox" VerticalAlignment="Top" Margin="10,10,0,10" materialDesign:HintAssist.Hint="Thema" FontSize="14" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="450" AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap" MaxLength="255"/>
                                     <Button Grid.Column="5" Content="Opslaan" Click="TrainingOpslaan_Click" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>
 
                                 </Grid>
@@ -157,7 +159,7 @@
                                         <Grid Grid.Row="1" Margin="14,0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="200" />
-                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition Width="100" />
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="Naam" />
                                             <TextBlock Grid.Column="1" Text="Nummer" />
@@ -174,8 +176,61 @@
                                                   Margin="0,0,0,10" Padding="10" BorderBrush="#333">
                                             <ListView.View>
                                                 <GridView>
-                                                    <GridViewColumn Width="200" DisplayMemberBinding="{Binding Naam}" />
-                                                    <GridViewColumn Width="150" DisplayMemberBinding="{Binding RugNummer}" />
+                                                    <GridViewColumn Width="200" DisplayMemberBinding="{Binding Speler.Naam}" />
+                                                    <GridViewColumn Width="100" DisplayMemberBinding="{Binding Speler.RugNummer}" />
+                                                    <GridViewColumn Width="100">
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <CheckBox IsChecked="{Binding IsAanwezig}" Content="Aanwezig" />
+                                                            </DataTemplate>
+                                                        </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Width="200">
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <CheckBox x:Name="AfwezigheidCheckBox" IsChecked="{Binding HeeftAfwezigheidGemeld}" Content="Afwezigheid was gemeld" Margin="0,5,0,0" >
+                                                                    <CheckBox.Style>
+                                                                        <Style TargetType="CheckBox">
+                                                                            <Setter Property="IsEnabled" Value="True" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsAanwezig}" Value="True">
+                                                                                    <Setter Property="IsEnabled" Value="False" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </CheckBox.Style>
+                                                                </CheckBox>
+                                                            </DataTemplate>
+                                                        </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Width="250">
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                                                    <TextBlock Text="Reden van afwezigheid:" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,10,0"/>
+                                                                    <ComboBox x:Name="RedenComboBox" Loaded="RedenComboBox_Loaded" SelectionChanged="RedenComboBox_SelectionChanged" Width="70">
+                                                                        <ComboBox.Style>
+                                                                            <Style TargetType="ComboBox">
+                                                                                <Style.Triggers>
+                                                                                    <!-- Transparant als IsAanwezig is True -->
+                                                                                    <DataTrigger Binding="{Binding IsAanwezig}" Value="True">
+                                                                                        <Setter Property="IsEnabled" Value="False" />
+                                                                                        <Setter Property="SelectedItem" Value="{x:Null}" />
+                                                                                    </DataTrigger>
+                                                                                    <!-- Transparant als HeeftAfwezigheidGemeld is False -->
+                                                                                    <DataTrigger Binding="{Binding HeeftAfwezigheidGemeld}" Value="False">
+                                                                                        <Setter Property="IsEnabled" Value="False" />
+                                                                                        <Setter Property="SelectedItem" Value="{x:Null}" />
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </ComboBox.Style>
+                                                                    </ComboBox>
+
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn>
                                                 </GridView>
                                             </ListView.View>
                                         </ListView>
@@ -226,7 +281,7 @@
                                            Target="{Binding ElementName=Details_TeamNaam_TBl}" />
                                     <TextBlock Grid.Column="1" x:Name="Details_TeamNaam_TBl" Margin="5,10" 
                                                FontWeight="Medium" VerticalAlignment="Center" />
-                                    <Label Grid.Column="2" Content="Aantal spelers:" Margin="0,10" 
+                                    <Label Grid.Column="2" Content="Aantal spelers:" Margin="10,10,0,10" 
                                            HorizontalAlignment="Left" VerticalAlignment="Center" 
                                            Target="{Binding ElementName=Details_TeamAantalSpelers_TBl}" />
                                     <TextBlock Grid.Column="3" x:Name="Details_TeamAantalSpelers_TBl" Margin="5,10,10,10" 
@@ -266,7 +321,7 @@
                                                 <GridView>
                                                     <GridViewColumn Width="200" DisplayMemberBinding="{Binding Naam}" />
                                                     <GridViewColumn Width="150" DisplayMemberBinding="{Binding RugNummer}" />
-                                                    <GridViewColumn Width="200" DisplayMemberBinding="{Binding Percentage, StringFormat=' {0}%'}" />
+                                                    <GridViewColumn Width="200" DisplayMemberBinding="{Binding Percentage, StringFormat='{}{0:F0}%'}" />
                                                 </GridView>
                                             </ListView.View>
                                         </ListView>
@@ -314,21 +369,52 @@
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Label Grid.Column="0" Content="Team:" Target="{Binding ElementName=Historiek_TeamNaam_TBl}" Margin="0,10"  HorizontalAlignment="Left" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" x:Name="Historiek_TeamNaam_TBl" Margin="5,10" VerticalAlignment="Center" FontWeight="Medium" />
-                                    <TextBlock Grid.Column="2" x:Name="Historiek_Team_AantalTrainingen_TextBlock" Margin="10,10"  VerticalAlignment="Center" Text="Aantal Trainingen: " />
+                                    <Label Grid.Column="0" Content="Team:" Target="{Binding ElementName=Historiek_TeamNaam_TBl}" 
+                                           Margin="0,10"  HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" x:Name="Historiek_TeamNaam_TBl" Margin="5,10" 
+                                               VerticalAlignment="Center" FontWeight="Medium" />
+                                    <Label Grid.Column="2" Content="Aantal trainingen" Target="{Binding ElementName=Historiek_AantalTrainingen_TBl}" 
+                                           Margin="10,10,0,10"  HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3" x:Name="Historiek_AantalTrainingen_TBl" 
+                                               Margin="5,10" VerticalAlignment="Center" />
                                 </Grid>
                             </StackPanel>
 
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <Border BorderBrush="LightGray" BorderThickness="0,0,0,1">
+                                    <Grid Grid.Column="0" Margin="10,0,10,10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Label Content="Historiek Trainingen:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" Target="{Binding ElementName=HistoriekTrainingen}" />
+                                        <Grid Grid.Row="1" Margin="14,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition Width="200" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Datum" />
+                                            <TextBlock Grid.Column="1" Text="Thema" />
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="390">
                                 <StackPanel>
-
-                                    <TextBlock Text="Historiek Trainingen:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" />
-                                    <!--implementeer SelectionChanged="Historiek_ListBox_SelectionChanged"-->
-                                    <ListBox x:Name="Historiek_ListBox" DisplayMemberPath="Name" Margin="0,0,0,10" Padding="10" BorderBrush="#333" ItemsSource="{Binding Trainingen}" />
-
+                                    <Grid Margin="10,0,10,0">
+                                        <ListView x:Name="HistoriekTrainingen" SelectionChanged="HistoriekTrainingen_SelectionChanged" Margin="0,0,0,10" Padding="10" BorderBrush="#333">
+                                            <ListView.View>
+                                                <GridView>
+                                                    <GridViewColumn Width="150" DisplayMemberBinding="{Binding Datum, StringFormat='{}{0:dd-MM-yyyy}'}" />
+                                                    <GridViewColumn Width="200" DisplayMemberBinding="{Binding Thema}" />
+                                                </GridView>
+                                            </ListView.View>
+                                        </ListView>
+                                    </Grid>
                                 </StackPanel>
                             </ScrollViewer>
 

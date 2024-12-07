@@ -30,8 +30,9 @@ namespace AanwezigheidProject_WPF
         public Team Team;
         public Speler Speler;
         public ObservableCollection<Team> Teams = [];
-        public ObservableCollection<Speler> Spelers = [];
         public ObservableCollection<Speler> SpelersMetPercentages = [];
+        public ObservableCollection<Aanwezigheid> AanwezighedenZonderTraining = [];
+        public ObservableCollection<Training> Trainingen = [];
 
         public CreateTraining(AanwezigheidManager manager)
         {
@@ -66,9 +67,12 @@ namespace AanwezigheidProject_WPF
                 Team = selectedTeam;
 
                 RefreshSpelerList(Team);
+                RefreshTrainingList(Team);
 
-                OverzichtSpelers.ItemsSource = Spelers;
+                OverzichtSpelers.ItemsSource = AanwezighedenZonderTraining;
                 DetailsSpelers.ItemsSource = SpelersMetPercentages;
+                HistoriekTrainingen.ItemsSource = Trainingen;
+
             }
         }
 
@@ -86,6 +90,7 @@ namespace AanwezigheidProject_WPF
                 Historiek_TeamNaam_TBl.Text = Team.TeamNaam.ToString();
 
                 RefreshSpelerList(Team);
+                RefreshTrainingList(Team);
             }
         }
 
@@ -94,6 +99,14 @@ namespace AanwezigheidProject_WPF
             if (OverzichtSpelers.SelectedItem != null && OverzichtSpelers.SelectedItem is Speler selectedSpeler)
             {
                 Speler = selectedSpeler;
+            }
+
+            if (OverzichtSpelers.SelectedItem is Aanwezigheid aanwezigheid)
+            {
+                if (aanwezigheid.IsAanwezig || !aanwezigheid.HeeftAfwezigheidGemeld)
+                {
+                    aanwezigheid.RedenAfwezigheid = ""; // Reset de reden
+                }
             }
         }
 
@@ -188,6 +201,31 @@ namespace AanwezigheidProject_WPF
 
         private void TrainingOpslaan_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                DateTime datum = DateTime.Today;
+                string thema = "";
+                if (MyDatePicker.SelectedDate.HasValue)
+                { datum = MyDatePicker.SelectedDate.Value; }
+                else
+                { MessageBox.Show("Geen datum geselecteerd.", "Fout", MessageBoxButton.OK, MessageBoxImage.Warning); }
+
+                if (ThemaTextBox.Text != null)
+                { thema = ThemaTextBox.Text; }
+
+                Training nieuweTraining = new(datum, thema, Team);
+                _manager.VoegTrainingMetAanwezigheidToe(nieuweTraining, LeesIngegevenAanwezigheden());
+
+                RefreshSpelerList(Team);
+                RefreshTrainingList(Team);
+                MessageBox.Show("Training is opgeslagen.");
+            }
+            catch (Exception ex)
+            { MessageBox.Show(ex.Message); }
+        }
+
+        private void HistoriekTrainingen_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
 
         }
 
@@ -201,45 +239,104 @@ namespace AanwezigheidProject_WPF
 
         }
 
+        private void RedenComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.ComboBox comboBox)
+            {
+                comboBox.ItemsSource = Enum.GetValues(typeof(RedenVanAfwezigheid));
+            }
+        }
+
+        private void RedenComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
+
+        public List<Aanwezigheid> LeesIngegevenAanwezigheden()
+        {
+            List<Aanwezigheid> aanwezigheden = [];
+            try
+            {
+                if (OverzichtSpelers.ItemsSource is ObservableCollection<Aanwezigheid> overzicht)
+                {
+                    foreach (Aanwezigheid a in overzicht)
+                    {
+                        Speler speler = a.Speler;
+                        bool isAanwezig = a.IsAanwezig;
+                        bool heeftAfwezigheidGemeld = a.HeeftAfwezigheidGemeld;
+                        string redenAfwezigheid = "";
+
+                        if (isAanwezig is true)
+                            heeftAfwezigheidGemeld = false;
+
+                        if (OverzichtSpelers.ItemContainerGenerator.ContainerFromItem(a) is ListViewItem listViewItem)
+                        {
+                            System.Windows.Controls.ComboBox redenComboBox = FindVisualChild<System.Windows.Controls.ComboBox>(listViewItem);
+
+                            if (redenComboBox != null)
+                            {
+                                string geselecteerdeReden = redenComboBox.Text;
+                                redenAfwezigheid = geselecteerdeReden;
+                            }
+                            else { throw new Exception(); }
+                        }
+                        aanwezigheden.Add(new(speler, isAanwezig, heeftAfwezigheidGemeld, redenAfwezigheid));
+                    }
+                }
+                else
+                { throw new Exception(); }
+            }
+            catch (Exception ex)
+            { MessageBox.Show(ex.Message); }
+            return aanwezigheden;
+        }
+
         public void RefreshSpelerList(Team team)
         {
-            Spelers.Clear();
             SpelersMetPercentages.Clear();
+            AanwezighedenZonderTraining.Clear();
 
             List<Speler> spelers = _manager.GeefSpelersVanTeam(team.TeamID);
             spelers.ForEach(s =>
             {
-                Spelers.Add(s);
                 SpelersMetPercentages.Add(
                     new Speler(s.SpelerID, s.Naam, s.RugNummer, s.Team, _manager.GeefPercentageAanwezigheid(s.SpelerID)));
+                AanwezighedenZonderTraining.Add(new Aanwezigheid(s, false, false, ""));
             });
 
-            AantalSpelersTBl.Text = Spelers.Count.ToString();
+            AantalSpelersTBl.Text = AanwezighedenZonderTraining.Count.ToString();
             Details_TeamAantalSpelers_TBl.Text = SpelersMetPercentages.Count.ToString();
         }
 
-        private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        public void RefreshTrainingList(Team team)
         {
-            var textBlock = sender as TextBlock;
-            textBlock.Visibility = Visibility.Collapsed;
+            Trainingen.Clear();
 
-            var textBox = (System.Windows.Controls.TextBox)VisualTreeHelper.GetParent(textBlock);
-            textBox.Visibility = Visibility.Visible;
-            textBox.Focus();
+            List<Training> trainingen = _manager.GeefTrainingenVanTeam(team.TeamID);
+            trainingen.ForEach(t =>
+            {
+                Trainingen.Add(t);
+            });
+
+            Historiek_AantalTrainingen_TBl.Text = Trainingen.Count.ToString();
         }
 
-        private void ShowSelectedDate_Click(object sender, RoutedEventArgs e)
+        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
-            // Controleer of er een datum is geselecteerd
-            if (MyDatePicker.SelectedDate.HasValue)
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
-                DateTime selectedDate = MyDatePicker.SelectedDate.Value;
-                MessageBox.Show($"Geselecteerde datum: {selectedDate.ToString("dd-MM-yyyy")}", "Datum");
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T typedChild)
+                {
+                    return typedChild;
+                }
+
+                T result = FindVisualChild<T>(child);
+                if (result != null)
+                {
+                    return result;
+                }
             }
-            else
-            {
-                MessageBox.Show("Geen datum geselecteerd!", "Waarschuwing");
-            }
+            return null;
         }
+
     }
 }
