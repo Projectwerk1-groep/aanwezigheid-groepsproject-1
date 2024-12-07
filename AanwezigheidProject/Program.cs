@@ -149,6 +149,7 @@ namespace AanwezigheidProject
             List<(Speler speler, bool isAanwezig, bool heeftAfwezigheidGemeld, RedenVanAfwezigheid redenAfwezigheid, string letselType, DateTime letselDatum, string notities)> listAanwezigheden = new();
             listAanwezigheden.Add(aanwezigheden1);
             aanwezigheidManager.VoegTrainingMetAanwezigheidToe(training2, listAanwezigheden);
+            Console.WriteLine($"{nameof(aanwezigheidManager.VoegTrainingMetAanwezigheidToe)} is getest");
             //================================================================================
 
 

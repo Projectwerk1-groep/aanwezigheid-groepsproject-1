@@ -859,5 +859,40 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesAanwezighedenVanTraining), ex);
             }
         }
+        //LeesTrainingOmAanwezighedenTeMaken: Deze methode retourneert dezelfde training die in de parameter wordt meegegeven, maar vult de eigenschap ID in vanuit de database.
+        public Training LeesTrainingOmAanwezighedenTeMaken(Training trainingZonderID)
+        {
+            Training trainingMetID = null;
+            string SQL = "SELECT id, datum, thema, team_id FROM Training WHERE datum = @datum AND thema = @thema AND team_id = @teamId;";
+            using SqlConnection conn = new(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
+            {
+                conn.Open();
+                cmd.CommandText = SQL;
+                cmd.Parameters.AddWithValue("@datum", trainingZonderID.Datum);
+                cmd.Parameters.AddWithValue("@thema", trainingZonderID.Thema);
+                cmd.Parameters.AddWithValue("@teamId", trainingZonderID.Team.TeamID);
+                IDataReader reader = cmd.ExecuteReader();
+
+                List<Team> teams = LeesTeams();
+                Dictionary<int, Team> dicTeams = new Dictionary<int, Team>();
+
+                foreach (Team team in teams)
+                {
+                    dicTeams.Add(team.TeamID, team);
+                }
+
+                while (reader.Read())
+                {
+                    trainingMetID = new Training((int)reader["id"], (DateTime)reader["datum"], (string)reader["thema"], dicTeams[(int)reader["team_id"]]);
+                }
+                return trainingMetID;
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(LeesTrainingOmAanwezighedenTeMaken), ex);
+            }
+        }
     }
 }

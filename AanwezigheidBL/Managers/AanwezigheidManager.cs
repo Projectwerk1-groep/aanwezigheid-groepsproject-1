@@ -188,7 +188,7 @@ namespace AanwezigheidBL.Managers
             try
             {
                 VoegTrainingToe(training);
-                Training trainingMetID = _aanwezigheidRepository.LeesTrainingOmAanwezighedenTeMaken(training);
+                Training trainingMetID = _aanwezigheidRepository.LeesTrainingen().Last();
                 foreach (var lijn in listOmAanwezighedenTeMaken)
                 {
                     //string reden = "";
