@@ -29,6 +29,7 @@ namespace AanwezigheidProject_WPF
         public AanwezigheidManager _manager;
         public Team Team;
         public Speler Speler;
+        public Training Training;
         public ObservableCollection<Team> Teams = [];
         public ObservableCollection<Speler> SpelersMetPercentages = [];
         public ObservableCollection<Aanwezigheid> AanwezighedenZonderTraining = [];
@@ -69,10 +70,6 @@ namespace AanwezigheidProject_WPF
                 RefreshSpelerList(Team);
                 RefreshTrainingList(Team);
 
-                OverzichtSpelers.ItemsSource = AanwezighedenZonderTraining;
-                DetailsSpelers.ItemsSource = SpelersMetPercentages;
-                HistoriekTrainingen.ItemsSource = Trainingen;
-
             }
         }
 
@@ -96,11 +93,6 @@ namespace AanwezigheidProject_WPF
 
         private void OverzichtSpelers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (OverzichtSpelers.SelectedItem != null && OverzichtSpelers.SelectedItem is Speler selectedSpeler)
-            {
-                Speler = selectedSpeler;
-            }
-
             if (OverzichtSpelers.SelectedItem is Aanwezigheid aanwezigheid)
             {
                 if (aanwezigheid.IsAanwezig || !aanwezigheid.HeeftAfwezigheidGemeld)
@@ -226,17 +218,76 @@ namespace AanwezigheidProject_WPF
 
         private void HistoriekTrainingen_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (HistoriekTrainingen.SelectedItem != null && HistoriekTrainingen.SelectedItem is Training selectedTraining)
+            {
+                Training = selectedTraining;
+            }
         }
 
-        private void ToonTraining_Click(object sender, RoutedEventArgs e)
+        private void WijzigTraining_Click(object sender, RoutedEventArgs e)
         {
+            Training oldTraining = Training;
+            try
+            {
+                if (HistoriekTrainingen.SelectedItem != null)
+                {
+                    WijzigTrainingInputDialog WijzigDialog = new(_manager, oldTraining);
+                    if (WijzigDialog.ShowDialog() == true) // Open de dialog en controleer op OK
+                    {
+                        List<Aanwezigheid> oldAn = _manager.GeefAanwezighedenVanTraining(Training);
+                        //ObservableCollection<Aanwezigheid> newAn = WijzigDialog.AanwezighedenVanTraining;
+                        List<Aanwezigheid> newAn = WijzigDialog.NieuweAanwezighedenVanTraining;
 
+                        foreach (Aanwezigheid oldA in oldAn)
+                        {
+                            foreach (Aanwezigheid newA in newAn)
+                            {
+                                _manager.WijzigAanwezigheid(oldA, newA);
+                            }
+                        }
+
+                        RefreshSpelerList(Team);
+                        RefreshTrainingList(Team);
+
+                        MessageBox.Show($"De aanwezigheden van de Training van {oldTraining.Datum.Date.ToString("dd/MM/yyyy")} zijn gewijzigd.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Selecteer eerst een training om te wijzigen.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void ExporteerTraining_Click(object sender, RoutedEventArgs e)
         {
+            string downloadsPath = FolderManager.GetPath(KnownFolder.Downloads);            
+            string filepath = $"{downloadsPath}\\TrainingGegevens.txt";
 
+            try
+            {
+                if (TeamComboBox.SelectedItem != null && TeamComboBox.SelectedItem is Team selectedTeam)
+                { Team = selectedTeam; }
+
+                if (HistoriekTrainingen.SelectedItem != null && HistoriekTrainingen.SelectedItem is Training selectedTraining)
+                {
+                    Training = selectedTraining;
+                    _manager.ExportAanwezigheidNaarTXT(Training, Team, filepath);
+                    MessageBox.Show($"Een nieuw tekstbestand is aangemaakt in {downloadsPath}");
+                }
+                else
+                {
+                    MessageBox.Show("Selecteer eerst een training om te exporteren.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void RedenComboBox_Loaded(object sender, RoutedEventArgs e)
@@ -247,7 +298,40 @@ namespace AanwezigheidProject_WPF
             }
         }
 
-        private void RedenComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
+        public void RefreshSpelerList(Team team)
+        {
+            SpelersMetPercentages.Clear();
+            AanwezighedenZonderTraining.Clear();
+
+            List<Speler> spelers = _manager.GeefSpelersVanTeam(team.TeamID).OrderBy(s => s.RugNummer).ToList();
+            spelers.ForEach(s =>
+            {
+                SpelersMetPercentages.Add(
+                    new Speler(s.SpelerID, s.Naam, s.RugNummer, s.Team, _manager.GeefPercentageAanwezigheid(s.SpelerID)));
+                AanwezighedenZonderTraining.Add(new Aanwezigheid(s, false, false, ""));
+            });
+
+            OverzichtSpelers.ItemsSource = AanwezighedenZonderTraining;
+            DetailsSpelers.ItemsSource = SpelersMetPercentages;
+
+            AantalSpelersTBl.Text = AanwezighedenZonderTraining.Count.ToString();
+            Details_TeamAantalSpelers_TBl.Text = SpelersMetPercentages.Count.ToString();
+        }
+
+        public void RefreshTrainingList(Team team)
+        {
+            Trainingen.Clear();
+
+            List<Training> trainingen = _manager.GeefTrainingenVanTeam(team.TeamID).OrderBy(t => t.Datum).ToList();
+            trainingen.ForEach(t =>
+            {
+                Trainingen.Add(t);
+            });
+
+            HistoriekTrainingen.ItemsSource = Trainingen;
+
+            Historiek_AantalTrainingen_TBl.Text = Trainingen.Count.ToString();
+        }
 
         public List<Aanwezigheid> LeesIngegevenAanwezigheden()
         {
@@ -262,14 +346,11 @@ namespace AanwezigheidProject_WPF
                         bool isAanwezig = a.IsAanwezig;
                         bool heeftAfwezigheidGemeld = a.HeeftAfwezigheidGemeld;
                         string redenAfwezigheid = "";
-
                         if (isAanwezig is true)
                             heeftAfwezigheidGemeld = false;
-
                         if (OverzichtSpelers.ItemContainerGenerator.ContainerFromItem(a) is ListViewItem listViewItem)
                         {
                             System.Windows.Controls.ComboBox redenComboBox = FindVisualChild<System.Windows.Controls.ComboBox>(listViewItem);
-
                             if (redenComboBox != null)
                             {
                                 string geselecteerdeReden = redenComboBox.Text;
@@ -286,36 +367,6 @@ namespace AanwezigheidProject_WPF
             catch (Exception ex)
             { MessageBox.Show(ex.Message); }
             return aanwezigheden;
-        }
-
-        public void RefreshSpelerList(Team team)
-        {
-            SpelersMetPercentages.Clear();
-            AanwezighedenZonderTraining.Clear();
-
-            List<Speler> spelers = _manager.GeefSpelersVanTeam(team.TeamID);
-            spelers.ForEach(s =>
-            {
-                SpelersMetPercentages.Add(
-                    new Speler(s.SpelerID, s.Naam, s.RugNummer, s.Team, _manager.GeefPercentageAanwezigheid(s.SpelerID)));
-                AanwezighedenZonderTraining.Add(new Aanwezigheid(s, false, false, ""));
-            });
-
-            AantalSpelersTBl.Text = AanwezighedenZonderTraining.Count.ToString();
-            Details_TeamAantalSpelers_TBl.Text = SpelersMetPercentages.Count.ToString();
-        }
-
-        public void RefreshTrainingList(Team team)
-        {
-            Trainingen.Clear();
-
-            List<Training> trainingen = _manager.GeefTrainingenVanTeam(team.TeamID);
-            trainingen.ForEach(t =>
-            {
-                Trainingen.Add(t);
-            });
-
-            Historiek_AantalTrainingen_TBl.Text = Trainingen.Count.ToString();
         }
 
         private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject

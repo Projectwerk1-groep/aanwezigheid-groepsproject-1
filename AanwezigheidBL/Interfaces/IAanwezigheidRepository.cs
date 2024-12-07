@@ -20,6 +20,7 @@ namespace AanwezigheidBL.Interfaces
         void SchrijfWijzigingSpeler(Speler oldSpeler, Speler newSpeler);
         void VerwijderSpelerVanDB(Speler speler);
         double LeesPercentageAanwezigheid(int spelerID); //Aanpassen
+        void SchrijfWijzigingAanwezigheid(Aanwezigheid oldA, Aanwezigheid newA);
         void VerwijderAanwezigheidVanDB(Speler speler);
         List<Team> LeesTeams();
         List<Team> LeesTeamsPerCoach(int coachId);
@@ -34,7 +35,7 @@ namespace AanwezigheidBL.Interfaces
         List<Training> LeesTrainingenVanTeam(int teamId);
         void LeesEnSchrijfAanwezigheidPerTrainingInTXT(Training training, Team team, string filePath);
         Training LeesTraining(int trainingId);
-        List<Aanwezigheid> LeesAanwezighedenVanTraining(Training training);
+        List<Aanwezigheid> LeesAanwezighedenVanTraining(int trainingID);
 
         #region Nog niet gebruiken
 

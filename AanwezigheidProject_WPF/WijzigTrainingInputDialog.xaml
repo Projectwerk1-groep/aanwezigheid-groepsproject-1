@@ -1,0 +1,148 @@
+﻿<Window x:Class="AanwezigheidProject_WPF.WijzigTrainingInputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AanwezigheidProject_WPF"
+        mc:Ignorable="d"
+        Title="WijzigTrainingInputDialog" Height="450" Width="800">
+    <Grid>
+        <StackPanel>
+
+            <StackPanel >
+                <Grid Margin="5,5,5,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Margin="0,10" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Wijzig de Training van" FontWeight="SemiBold" FontSize="15" />
+                    <TextBlock Grid.Column="1" x:Name="TrainingDatum" Margin="10,10,10,10" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="15" />
+
+                </Grid>
+            </StackPanel>
+
+            <StackPanel>
+                <Border BorderBrush="LightGray" BorderThickness="0,0,0,1">
+                    <Grid Grid.Column="0" Margin="10,0,10,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Content="Overzicht Aanwezigheden:" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10" Target="{Binding ElementName=OverzichtAanwezigheden}" />
+                        <Grid Grid.Row="1" Margin="14,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="100" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Naam" />
+                            <TextBlock Grid.Column="1" Text="Nummer" />
+                        </Grid>
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="450">
+                <StackPanel>
+                    <Grid Grid.Column="0" Margin="10,0,10,0">
+                        <ListView x:Name="OverzichtAanwezigheden"
+                          SelectionChanged="OverzichtAanwezigheden_SelectionChanged" 
+                          Margin="0,0,0,10" Padding="10" BorderBrush="#333">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="200" DisplayMemberBinding="{Binding Speler.Naam}" />
+                                    <GridViewColumn Width="100" DisplayMemberBinding="{Binding Speler.RugNummer}" />
+                                    <GridViewColumn Width="100">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding IsAanwezig}" Content="Aanwezig" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="200">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox x:Name="AfwezigheidCheckBox" IsChecked="{Binding HeeftAfwezigheidGemeld}" 
+                                                          Content="Afwezigheid was gemeld" Margin="0,5,0,0" >
+                                                    <CheckBox.Style>
+                                                        <Style TargetType="CheckBox">
+                                                            <Setter Property="IsEnabled" Value="True" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsAanwezig}" Value="True">
+                                                                    <Setter Property="IsEnabled" Value="False" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </CheckBox.Style>
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="Auto">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="Reden van afwezigheid:" VerticalAlignment="Center" FontWeight="Bold"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="75" DisplayMemberBinding="{Binding RedenAfwezigheid}" />
+                                    <GridViewColumn Width="250">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Reden veranderen?:" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,5,0"/>
+                                                    <ComboBox x:Name="RedenComboBox" Loaded="RedenComboBox_Loaded" Width="70" SelectedItem="{Binding RedenAfwezigheid}">
+                                                        <ComboBox.Style>
+                                                            <Style TargetType="ComboBox">
+                                                                <Style.Triggers>
+                                                                    <!-- Transparant als IsAanwezig is True -->
+                                                                    <DataTrigger Binding="{Binding IsAanwezig}" Value="True">
+                                                                        <Setter Property="IsEnabled" Value="False" />
+                                                                        <Setter Property="SelectedItem" Value="{x:Null}" />
+                                                                    </DataTrigger>
+                                                                    <!-- Transparant als HeeftAfwezigheidGemeld is False -->
+                                                                    <DataTrigger Binding="{Binding HeeftAfwezigheidGemeld}" Value="False">
+                                                                        <Setter Property="IsEnabled" Value="False" />
+                                                                        <Setter Property="SelectedItem" Value="{x:Null}" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </ComboBox.Style>
+                                                    </ComboBox>
+
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+
+            <StackPanel Margin="30,10,30,0">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Content="Aanwezigheden Wijzigen" Width="Auto" Margin="5" Click="OK_Click" HorizontalAlignment="Left" />
+                    <Button Content="Annuleer" Width="Auto" Margin="5" Click="Cancel_Click" HorizontalAlignment="Right" Grid.Column="1" />
+
+
+                    <!--<Button Grid.Column="0" Content="Speler Toevoegen" Background="SeaGreen" 
+                    Height="40" Padding="10" HorizontalAlignment="Left" 
+                    Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
+            <Button Grid.Column="1" Content="Speler Verwijderen" Background="IndianRed" 
+                    Height="40" Padding="10" HorizontalAlignment="Right" 
+                    Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>                  
+            <Button Grid.Column="0" Content="Opslaan" Click="WijzigingTrainingOpslaan_Click" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="18" Style="{StaticResource MaterialDesignFlatButton}"/>-->
+
+                </Grid>
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Window>

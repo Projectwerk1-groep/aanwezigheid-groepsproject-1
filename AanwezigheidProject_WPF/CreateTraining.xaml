@@ -208,7 +208,7 @@
                                                             <DataTemplate>
                                                                 <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
                                                                     <TextBlock Text="Reden van afwezigheid:" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,10,0"/>
-                                                                    <ComboBox x:Name="RedenComboBox" Loaded="RedenComboBox_Loaded" SelectionChanged="RedenComboBox_SelectionChanged" Width="70">
+                                                                    <ComboBox x:Name="RedenComboBox" Loaded="RedenComboBox_Loaded" Width="70">
                                                                         <ComboBox.Style>
                                                                             <Style TargetType="ComboBox">
                                                                                 <Style.Triggers>
@@ -340,7 +340,7 @@
                                     <Button Grid.Column="0" Content="Speler Toevoegen" Background="SeaGreen" 
                                             Height="40" Padding="10" HorizontalAlignment="Left" Click="VoegSpelerToe_Click"
                                             Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
-                                    <Button Grid.Column="1" Content="Speler Wijzigen" Background="RoyalBlue" 
+                                    <Button Grid.Column="1" Content="Speler Wijzigen" Background="MediumPurple" 
                                             Height="40" Padding="10" HorizontalAlignment="Center" Click="WijzigSpeler_Click"
                                             Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
                                     <Button Grid.Column="2" Content="Speler Verwijderen" Background="IndianRed" 
@@ -425,11 +425,11 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Button Grid.Column="0" Content="Traininggegevens Tonen" Background="SeaGreen" 
-                                            Height="40" Padding="10" HorizontalAlignment="Left" 
+                                    <Button Grid.Column="0" Content="Toon Aanwezigheden" Background="MediumPurple" 
+                                            Height="40" Padding="10" HorizontalAlignment="Left" Click="WijzigTraining_Click"
                                             Style="{StaticResource MaterialDesignFlatMidBgButton}"/>
                                     <Button Grid.Column="1" Content="Export naar Tekstbestand" Background="RoyalBlue" 
-                                            Height="40" Padding="10" HorizontalAlignment="Right" 
+                                            Height="40" Padding="10" HorizontalAlignment="Right" Click="ExporteerTraining_Click"
                                             Style="{StaticResource MaterialDesignFlatDarkBgButton}"/>
                                 </Grid>
                             </StackPanel>

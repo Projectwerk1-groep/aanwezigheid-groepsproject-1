@@ -131,7 +131,7 @@ namespace AanwezigheidDL_SQL
                 cmd.Parameters.AddWithValue("@newNaam", newSpeler.Naam);
                 cmd.Parameters.AddWithValue("@newRugNummer", newSpeler.RugNummer);
                 cmd.Parameters.AddWithValue("@newTeamID", newSpeler.Team.TeamID);
-                cmd.Parameters.AddWithValue("@id", oldSpeler.SpelerID);
+                cmd.Parameters.AddWithValue("@id", newSpeler.SpelerID);
 
                 cmd.ExecuteNonQuery();
             }
@@ -266,6 +266,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesTrainingenVanTeam), ex);
             }
         }
+        
         //LeesTrainingOmAanwezighedenTeMaken: Deze methode retourneert dezelfde training die in de parameter wordt meegegeven, maar vult de eigenschap ID in vanuit de database.
         public Training LeesTrainingOmAanwezighedenTeMaken(Training trainingZonderID)
         {
@@ -404,6 +405,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(SchrijfAanwezigheid), ex);
             }
         }
+        
         //LeesEnSchrijfAanwezigheidPerTrainingInTXT: Deze methode exporteert de aanwezigheidsgegevens van elke speler, gebaseerd op het team en de training, naar een tekstbestand
         public void LeesEnSchrijfAanwezigheidPerTrainingInTXT(Training training, Team team, string filePath) // getest door Intesar
         {
@@ -453,6 +455,7 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesEnSchrijfAanwezigheidPerTrainingInTXT), ex);
             }
         }
+        
         //LeesPercentageAanwezigheid: Deze methode berekent het aanwezigheidspercentage van een speler bij de trainingendoor het aantal trainingen dat hij heeft bijgewoond te delen door het totale aantal trainingen dat hij had kunnen bijwonen. Deze methode kan worden gebruikt op de details-pagina in de UI.
         public double LeesPercentageAanwezigheid(int spelerID) // getest door Gaith
         {
@@ -484,6 +487,33 @@ namespace AanwezigheidDL_SQL
             }
         }
 
+        // SchrijfWijzigingAanwezigheid: Deze methode wijzigt de aan-/afwezigheid van een speler van een bepaalde training.
+        public void SchrijfWijzigingAanwezigheid(Aanwezigheid oldA, Aanwezigheid newA) // getest door Orlando
+        {
+            string sql = "UPDATE Aanwezigheid SET isAanwezig = @newIsAanwezig, " +
+                "heeftAfwezigheidGemeld = @newHeeftAfwezigheidGemeld, " +
+                "redenAfwezigheid = @newRedenAfwezigheid " +
+                "WHERE (speler_id = @speler_id AND training_id = @training_id);";
+            using SqlConnection conn = new(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
+            {
+                conn.Open();
+                cmd.CommandText = sql;
+                cmd.Parameters.AddWithValue("@newIsAanwezig", newA.IsAanwezig);
+                cmd.Parameters.AddWithValue("@newHeeftAfwezigheidGemeld", newA.HeeftAfwezigheidGemeld);
+                cmd.Parameters.AddWithValue("@newRedenAfwezigheid", newA.RedenAfwezigheid);
+                cmd.Parameters.AddWithValue("@speler_id", newA.Speler.SpelerID);
+                cmd.Parameters.AddWithValue("@training_id", newA.Training.TrainingID);
+
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(SchrijfWijzigingAanwezigheid), ex);
+            }
+        }
+
         public void VerwijderAanwezigheidVanDB(Speler speler) // getest door Orlando
         {
             string sql = "DELETE FROM Aanwezigheid WHERE speler_id = @speler_id;";
@@ -500,6 +530,46 @@ namespace AanwezigheidDL_SQL
             catch (Exception ex)
             {
                 throw new DomeinException(nameof(VerwijderAanwezigheidVanDB), ex);
+            }
+        }
+
+        // LeesAanwezighedenVanTraining: Deze methode retourneert de aan-/afwezigheden van alle spelers van de gegeven training.
+        public List<Aanwezigheid> LeesAanwezighedenVanTraining(int trainingID) // Getest door Orlando
+        {
+            string SQL = "SELECT * FROM Aanwezigheid WHERE training_id = @training_id";
+            List<Aanwezigheid> aanwezigheden = [];
+            using SqlConnection conn = new(_connectionString);
+            using SqlCommand cmd = conn.CreateCommand();
+            try
+            {
+                conn.Open();
+                cmd.CommandText = SQL;
+                cmd.Parameters.AddWithValue("training_id", trainingID);
+                IDataReader reader = cmd.ExecuteReader();
+
+                List<Speler> spelers = LeesSpelers();
+                Dictionary<int, Speler> dicSpelers = [];
+                foreach (Speler speler in spelers)
+                {
+                    dicSpelers.Add(speler.SpelerID, speler);
+                }
+
+                List<Training> trainingen = LeesTrainingen();
+                Dictionary<int, Training> dicTrainingen = [];
+                foreach (Training training in trainingen)
+                {
+                    dicTrainingen.Add(training.TrainingID, training);
+                }
+
+                while (reader.Read())
+                {
+                    aanwezigheden.Add(new Aanwezigheid(dicSpelers[(int)reader["speler_id"]], dicTrainingen[(int)reader["training_id"]], (bool)reader["isAanwezig"], (bool)reader["heeftAfwezigheidGemeld"], (string)reader["redenAfwezigheid"]));
+                }
+                return aanwezigheden;
+            }
+            catch (Exception ex)
+            {
+                throw new DomeinException(nameof(LeesAanwezighedenVanTraining), ex);
             }
         }
 
@@ -821,45 +891,6 @@ namespace AanwezigheidDL_SQL
                 throw new DomeinException(nameof(LeesTrainingen), ex);
             }
         }
-        
-        public List<Aanwezigheid> LeesAanwezighedenVanTraining(Training trainingMetAanwezigheden)
-        {
-            string SQL = "SELECT * FROM Aanwezigheid WHERE training_id = @training_id";
-            List<Aanwezigheid> aanwezigheden = [];
-            using SqlConnection conn = new(_connectionString);
-            using SqlCommand cmd = conn.CreateCommand();
-            try
-            {
-                conn.Open();
-                cmd.CommandText = SQL;
-                cmd.Parameters.AddWithValue("training_id", trainingMetAanwezigheden);
-                IDataReader reader = cmd.ExecuteReader();
-
-                List<Speler> spelers = LeesSpelers();
-                Dictionary<int, Speler> dicSpelers = [];
-                foreach (Speler speler in spelers)
-                {
-                    dicSpelers.Add(speler.SpelerID, speler);
-                }
-
-                List<Training> trainingen = LeesTrainingen();
-                Dictionary<int, Training> dicTrainingen = [];
-                foreach (Training training in trainingen)
-                {
-                    dicTrainingen.Add(training.TrainingID, training);
-                }
-
-                while (reader.Read())
-                {
-                    aanwezigheden.Add(new Aanwezigheid(dicSpelers[(int)reader["speler_id"]], dicTrainingen[(int)reader["training_id"]], (bool)reader["isAanwezig"], (bool)reader["heeftAfwezigheidGemeld"], (string)reader["redenAfwezigheid"]));
-                }
-                return aanwezigheden;
-            }
-            catch (Exception ex)
-            {
-                throw new DomeinException(nameof(LeesAanwezighedenVanTraining), ex);
-            }
-        }
-        
+            
     }
 }

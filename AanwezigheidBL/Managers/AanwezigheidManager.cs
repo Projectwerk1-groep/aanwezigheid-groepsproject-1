@@ -110,6 +110,33 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(WijzigTraining), ex);
             }
         }
+
+        // WijzigAanwezigheid: Deze methode wijzigt de aan-/afwezigheid van een speler van een bepaalde training.
+        public void WijzigAanwezigheid(Aanwezigheid oldA, Aanwezigheid newA) // Getest door Orlando
+        {
+            try
+            {
+                _aanwezigheidRepository.SchrijfWijzigingAanwezigheid(oldA, newA);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(WijzigAanwezigheid), ex);
+            }
+        }
+
+        // GeefAanwezighedenVanTraining: Deze methode retourneert de aan-/afwezigheden van alle spelers van de gegeven training.
+        public List<Aanwezigheid> GeefAanwezighedenVanTraining(Training training) // Getest door Orlando
+        {
+            try
+            {
+                return _aanwezigheidRepository.LeesAanwezighedenVanTraining(training.TrainingID);
+            }
+            catch (Exception ex)
+            {
+                throw new ManagerException(nameof(GeefAanwezighedenVanTraining), ex);
+            }
+        }
+
         //GeefTrainingenVanTeam: Deze methode retourneert alle eerdere trainingen van een specifiek team en kan worden gebruikt op de details-pagina.
         public List<Training> GeefTrainingenVanTeam(int teamID) // getest door Intesar
         {
@@ -163,6 +190,7 @@ namespace AanwezigheidBL.Managers
                 throw new ManagerException(nameof(ExportAanwezigheidNaarTXT), ex);
             }
         }
+
         //GeefPercentageAanwezigheid: Deze methode berekent het aanwezigheidspercentage van een speler bij de trainingendoor het aantal trainingen dat hij heeft bijgewoond te delen door het totale aantal trainingen dat hij had kunnen bijwonen. Deze methode kan worden gebruikt op de details-pagina in de UI.
         public double GeefPercentageAanwezigheid(int spelerID) // getest door Gaith
         {
@@ -201,7 +229,6 @@ namespace AanwezigheidBL.Managers
                     Aanwezigheid aanwezigheid = new(lijn.Speler, trainingMetID, lijn.IsAanwezig, lijn.HeeftAfwezigheidGemeld, lijn.RedenAfwezigheid);
                     VoegAanwezigheidToe(aanwezigheid);
 
-
                     //if (lijn.redenAfwezigheid == RedenVanAfwezigheid.Letsel)
                     //{
                     //    Letsel letsel = new(lijn.speler, lijn.letselType, lijn.letselDatum, lijn.notities);
@@ -215,6 +242,7 @@ namespace AanwezigheidBL.Managers
             }
 
         }
+
         //GeefTeams: Deze methode controleert of dit team al in de database bestaat voordat we details eraan toevoegen.
         public List<Team> GeefTeams() // getest door Intesar
         {
@@ -279,7 +307,7 @@ namespace AanwezigheidBL.Managers
             {
                 throw new ManagerException(nameof(VoegCoachToe), ex);
             }
-        }
+        } 
         public void VoegTeamToe(Team team) // getest door Gaith
         {
             try
@@ -293,7 +321,6 @@ namespace AanwezigheidBL.Managers
             {
                 throw new ManagerException(nameof(VoegTeamToe), ex);
             }
-        }
-
+        }        
     }
 }
