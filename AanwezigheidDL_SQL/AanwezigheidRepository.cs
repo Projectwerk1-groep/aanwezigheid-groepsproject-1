@@ -131,7 +131,7 @@ namespace AanwezigheidDL_SQL
                 cmd.Parameters.AddWithValue("@newNaam", newSpeler.Naam);
                 cmd.Parameters.AddWithValue("@newRugNummer", newSpeler.RugNummer);
                 cmd.Parameters.AddWithValue("@newTeamID", newSpeler.Team.TeamID);
-                cmd.Parameters.AddWithValue("@id", newSpeler.SpelerID);
+                cmd.Parameters.AddWithValue("@id", oldSpeler.SpelerID);
 
                 cmd.ExecuteNonQuery();
             }
